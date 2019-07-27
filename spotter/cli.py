@@ -30,15 +30,13 @@ import datetime
 import json
 import inspect
 import argparse
-from shutil import copy2 as copyfile
-from spotter import about, Colors, logger
+from botocore.exceptions import ClientError
+from spotter.lambda_utils import read_env_variable
 from libtools import stdout_message
 from spotter.statics import local_config
 from spotter.help_menu import menu_body
-from spotter.core import linecount, locate_fileobjects, remove_illegal, print_footer, print_header
-from spotter.exclusions import ExcludedTypes
-from spotter.configure import display_exclusions, main_menupage
 from spotter.colormap import ColorMap
+from spotter import about, Colors, logger
 from spotter.variables import *
 
 
@@ -100,47 +98,10 @@ def precheck(user_exfiles, user_exdirs, debug):
     """
     Runtime Dependency Checks: postinstall artifacts, environment
     """
-    def set_environment():
-        lang = 'undefined'
-        if os.getenv('LANG') is None:
-            lang = '{}export LANG=en_US.UTF-8{}'.format(yl, rst)
-        elif 'UTF-8' not in os.getenv('LANG'):
-            lang = '{}export LANG=$LANG.UTF-8{}'.format(yl, rst)
-        return lang
-
-    _os_configdir = os.path.join(modules_location(), 'config')
-    _os_ex_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_FILENAME'])
-    _os_dir_fname = os.path.join(_os_configdir, local_config['EXCLUSIONS']['EX_DIR_FILENAME'])
-    _config_dir = local_config['CONFIG']['CONFIG_DIR']
-    _language = set_environment()
-    _environment_setup = 'fail' if 'UTF-8' in _language else 'success'
-
-    if debug:
-        tab = '\t'.expandtabs(16)
-        stdout_message(f'_os_configdir: {_os_configdir}: system py modules location', 'DBUG')
-        stdout_message(f'_os_ex_fname: {_os_ex_fname}: system exclusions.list path', 'DBUG')
-        stdout_message(f'_os_dir_fname: {_os_dir_fname}: system directories.list file path', 'DBUG')
-        stdout_message(f'_configdir: {_config_dir}: user home config file location', 'DBUG')
-        stdout_message(f'Environment setup status: {_environment_setup.upper()}')
-
-        if _environment_setup.upper() == 'FAIL':
-            _env = _environment_setup.upper()
-            msg = f'Environment setting is {_env}. Add the following code in your .bashrc file'
-            stdout_message('{}:  {}'.format(msg, _language))
-
     try:
         # check if exists; copy
         if not os.path.exists(_config_dir):
             os.makedirs(_config_dir)
-
-        # cp system config file to user if user config files absent
-        if os.path.exists(_os_ex_fname) and os.path.exists(_os_dir_fname):
-
-            if not os.path.exists(user_exfiles):
-                copyfile(_os_ex_fname, user_exfiles)
-
-            if not os.path.exists(user_exdirs):
-                copyfile(_os_dir_fname, user_exdirs)
 
     except OSError:
         fx = inspect.stack()[0][3]
@@ -151,19 +112,60 @@ def precheck(user_exfiles, user_exdirs, debug):
 
 def endpoint_duration_calc(duration_days=1, start_time=None, end_time=None):
     try:
-        if all(x is None for x in [start_time, end_time])
+        if all(x is None for x in [start_time, end_time]):
             end = datetime.datetime.today()
             duration = datetime.timedelta(days=duration_days)
             start = end - duration
             return start, end
 
-        start = convert_dt(start_time)
-        end = convert_dt(end_time)
+        elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
+            start = convert_dt(start_time)
+            end = convert_dt(end_time)
     except Exception as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
         sys.exit(exit_codes['E_BADARG']['Code'])
     return  start, end
 
+
+def retreive_spotprice_data(start_dt, end_dt, debug=False):
+    """
+    Returns:
+        spot price data (dict), unique list of instance sizes (list)
+s
+    """
+    try:
+        for region in get_regions():
+            client = boto3.client('ec2', region_name=region)
+            pricelist = client.describe_spot_price_history(StartTime=start, EndTime=end).get(['SpotPriceHistory'])
+            instance_sizes = set([x['InstanceType'] for x in pricelist])
+    except ClientError as e:
+        return [], []
+    return pricelist, instance_sizes
+
+
+def retreive_spotprice_generator(start_dt, end_dt, debug=False):
+    """
+    Summary:
+        Generator returning up to 1000 data items at once
+
+    Returns:
+        spot price data (dict), unique list of instance sizes (list
+
+    """
+    for region in get_regions():
+        client = boto3.client('ec2', region_name=region)
+        paginator = client.get_paginator('describe_spot_price_history')
+        page_size= read_env_variable('spotprices_per_page', 500)
+        page_iterator = paginator.paginate(
+                            StartTime=start_dt,
+                            EndTime=end_dt,
+                            DryRun=debug,
+                            PaginationConfig={'PageSize': page_size}
+                        )
+    for page in page_iterator:
+        yield page['Contents']
+    pricelist = client.describe_spot_price_history(StartTime=start, EndTime=end).get(['SpotPriceHistory'])
+    instance_sizes = set([x['InstanceType'] for x in pricelist])
 
 def init():
 
@@ -190,6 +192,9 @@ def init():
 
     elif args.pull:
         start, end = endpoint_duration_calc(args.start, args.end)
+
+        for data in retreive_spotprice_data(start, end):
+            s3upload(data)
 
     else:
         stdout_message(
