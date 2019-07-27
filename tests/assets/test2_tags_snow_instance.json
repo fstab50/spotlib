@@ -1,0 +1,54 @@
+[
+    {
+        "Key": "CloudID",
+        "Value": "AT17-0125"
+    },
+    {
+        "Key": "MPC-AWS-CREATIONDATE",
+        "Value": "2017-10-09T10:13:14Z"
+    },
+    {
+        "Key": "MPC-AWS-OWNER",
+        "Value": "SVC.SNOW"
+    },
+    {
+         "Key": "MPC-AWS-PRINCIPALID",
+         "Value": "AIDAIYRH3XU3AGL7CEO5E"
+    },    
+    {
+        "Key": "UHC-SN-BACKUP",
+        "Value": "CPM"
+    },
+    {
+        "Key": "UHC-SN-BUSINESSCLASS",
+        "Value": "STD"
+    },
+    {
+        "Key": "UHC-SN-BUSINESSPURPOSE",
+        "Value": "Middleware"
+    },
+    {
+        "Key": "UHC-SN-MANAGED",
+        "Value": "OP-SYS"
+    },
+    {
+        "Key": "UHC-SN-NAME",
+        "Value": "EC2USE1W0050"
+    },
+    {
+        "Key": "UHC-SN-OWNER",
+        "Value": "Atos"
+    },
+    {
+        "Key": "UHC-SN-SNOW",
+        "Value": "RITM000239040"
+    },
+    {
+        "Key": "Name",
+        "Value": "EC2USE1W0050"
+    },
+    {
+        "Key": "cpm backup",
+        "Value": "AtostoolingprBckLinGenDisabled"
+    }
+]

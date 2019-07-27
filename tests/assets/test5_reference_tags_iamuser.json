@@ -1,0 +1,19 @@
+[
+    {
+        "Key": "CloudID",
+        "Value": "AT17-0125"
+    },    
+    {
+       "Key": "MPC-AWS-OWNER",
+        "Value": "A490001"
+    },
+    {
+        "Key": "MPC-AWS-PRINCIPALID",
+        "Value": "AIDAIYRH3XU3AGL7CEO5E:A490001"
+    },
+    {
+        "Key": "MPC-AWS-CREATIONDATE",
+        "Value": "2016-11-11T11:11:14Z"
+    }
+
+]

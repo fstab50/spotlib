@@ -1,0 +1,19 @@
+[
+    {
+        "Key": "Name",
+        "Value": "EC2TEST0001"
+    },
+    {
+       "Key": "MPC-AWS-OWNER",
+        "Value": "A490001"
+    },
+    {
+        "Key": "MPC-AWS-PRINCIPALID",
+        "Value": "AIDAIYRH3XU3AGL7CEO5E:A490001"
+    },
+    {
+        "Key": "MPC-AWS-CREATIONDATE",
+        "Value": "2017-10-09T10:13:14Z"
+    }
+
+]

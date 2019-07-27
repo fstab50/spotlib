@@ -1,0 +1,26 @@
+[
+    {
+        "Key": "CloudID",
+        "Value": "AT17-0125"
+    },
+    {
+        "Key": "MPC-AWS-CREATIONDATE",
+        "Value": "2016-11-11T11:11:14Z"
+    },
+    {
+        "Key": "cpm backup",
+        "Value": "AtostoolingprBckLinGenDisabled"
+    },
+    {
+        "Key": "UHC-SN-BUSINESSCLASS",
+        "Value": "STD"
+    },
+    {
+        "Key": "UHC-SN-BUSINESSPURPOSE",
+        "Value": "Middleware"
+    },
+    {
+        "Key": "UHC-SN-MANAGED",
+        "Value": "OP-SYS"
+    }
+]
