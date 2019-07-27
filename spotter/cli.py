@@ -142,7 +142,7 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
     return pricelist, instance_sizes
 
 
-def retreive_spotprice_generator(start_dt, end_dt, debug=False):
+def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
     """
     Summary:
         Generator returning up to 1000 data items at once
@@ -151,19 +151,18 @@ def retreive_spotprice_generator(start_dt, end_dt, debug=False):
         spot price data (dict), unique list of instance sizes (list
 
     """
-    for region in get_regions():
-        client = boto3.client('ec2', region_name=region)
-        paginator = client.get_paginator('describe_spot_price_history')
-        page_size= read_env_variable('spotprices_per_page', 500)
-        page_iterator = paginator.paginate(
-                            StartTime=start_dt,
-                            EndTime=end_dt,
-                            DryRun=debug,
-                            PaginationConfig={'PageSize': page_size}
-                        )
+    client = boto3.client('ec2', region_name=region)
+    paginator = client.get_paginator('describe_spot_price_history')
+    page_size= read_env_variable('spotprices_per_page', 500)
+    page_iterator = paginator.paginate(
+                        StartTime=start_dt,
+                        EndTime=end_dt,
+                        DryRun=debug,
+                        PaginationConfig={'PageSize': page_size}
+                    )
     for page in page_iterator:
-        yield page['Contents']
-    instance_sizes = set([x['InstanceType'] for x in pricelist])
+        for price_dict in page['SpotPriceHistory']:
+            yield price_dict
 
 
 def init():
@@ -190,10 +189,23 @@ def init():
     elif args.pull:
 
         # validate prerun conditions
-        if precheck(args.debug):
-            start, end = endpoint_duration_calc(args.start, args.end)
+        if not precheck(args.debug):
+            sys.exit(exit_codes['E_BADARG']['Code'])
 
-            for data in retreive_spotprice_data(start, end):
+        start, end = endpoint_duration_calc(args.start, args.end)
+
+        for region in get_regions():
+
+            s3_fname = '_'.join(
+                            [
+                                start.strftime('%Y-%m-%dT%H:%M:%S'),
+                                end.strftime('%Y-%m-%dT%H:%M:%S'),
+                                'all-instance-spot-prices.json'
+                            ]
+                        )
+
+            for data in retreive_spotprice_generator(start, end):
+                write_data(fs_location='/tmp', fname=s3_fname)
                 s3upload(data)
 
     else:
