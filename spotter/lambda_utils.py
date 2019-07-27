@@ -137,11 +137,12 @@ def get_regions():
 
     Returns:
         TYPE: list
+
     """
     try:
+
         client = boto3.client('ec2')
-        region_response = client.describe_regions()
-        regions = [region['RegionName'] for region in region_response['Regions']]
+        response = client.describe_regions()
 
     except ClientError as e:
         logger.critical(
@@ -149,7 +150,7 @@ def get_regions():
             (inspect.stack()[0][3], e.response['Error']['Code'],
             e.response['Error']['Message']))
         raise e
-    return regions
+    return [region['RegionName'] for region in response['Regions']]
 
 
 def sns_notification(topic_arn, subject, message, account_id=None, account_name=None):
@@ -227,37 +228,6 @@ def import_file_object(filename):
         )
         return file_obj    # reg file, not valid json
     return dict_obj
-
-
-def export_json_object(dict_obj, filename=None):
-    """
-
-    Summary: exports object to block fs object
-
-    Args:
-        dict_obj - dictionary object
-        filename - name of file to be exported
-
-    Returns:
-        True | False Boolean export status
-
-    """
-    try:
-        if filename:
-            with open(filename, 'w') as handle:
-                handle.write(json.dumps(dict_obj, indent=4, sort_keys=True))
-        else:
-            print(json.dumps(dict_obj, indent=4, sort_keys=True))
-
-    except IOError as e:
-        logger.critical(
-            '%s: export_file_object: error writing to %s to filesystem. Error: %s' %
-            (inspect.stack()[0][3], filename, str(e)))
-        return False
-    else:
-        logger.info(
-            'export_file_object: successful export to %s' % filename)
-        return True
 
 
 def range_bind(min_value, max_value, value):

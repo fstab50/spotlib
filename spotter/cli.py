@@ -31,7 +31,7 @@ import json
 import inspect
 import argparse
 from botocore.exceptions import ClientError
-from spotter.lambda_utils import read_env_variable
+from spotter.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
 from spotter.statics import local_config
 from spotter.help_menu import menu_body
@@ -59,6 +59,8 @@ except Exception:
 container = []
 module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
+
+
 
 
 def modules_location():
@@ -94,15 +96,12 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def precheck(user_exfiles, user_exdirs, debug):
+def precheck(debug):
     """
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     try:
-        # check if exists; copy
-        if not os.path.exists(_config_dir):
-            os.makedirs(_config_dir)
-
+        pass
     except OSError:
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
@@ -131,7 +130,7 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
     """
     Returns:
         spot price data (dict), unique list of instance sizes (list)
-s
+
     """
     try:
         for region in get_regions():
@@ -164,8 +163,8 @@ def retreive_spotprice_generator(start_dt, end_dt, debug=False):
                         )
     for page in page_iterator:
         yield page['Contents']
-    pricelist = client.describe_spot_price_history(StartTime=start, EndTime=end).get(['SpotPriceHistory'])
     instance_sizes = set([x['InstanceType'] for x in pricelist])
+
 
 def init():
 
@@ -178,9 +177,7 @@ def init():
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    # validate configuration files
-    if precheck(ex_files, ex_dirs, args.debug):
-        _ct_threshold = set_hicount_threshold() or local_config['CONFIG']['COUNT_HI_THRESHOLD']
+
 
     if len(sys.argv) == 1 or args.help:
         help_menu()
@@ -191,10 +188,13 @@ def init():
 
 
     elif args.pull:
-        start, end = endpoint_duration_calc(args.start, args.end)
 
-        for data in retreive_spotprice_data(start, end):
-            s3upload(data)
+        # validate prerun conditions
+        if precheck(args.debug):
+            start, end = endpoint_duration_calc(args.start, args.end)
+
+            for data in retreive_spotprice_data(start, end):
+                s3upload(data)
 
     else:
         stdout_message(
