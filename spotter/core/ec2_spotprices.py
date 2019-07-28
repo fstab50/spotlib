@@ -42,6 +42,9 @@ class EC2SpotPrices():
         Generator class using pagination to return unlimited
         number of spot price history data dict
 
+    Use:
+        sprices = EC2SpotPrices()
+
     Returns:
         spot price data (generator)
 
@@ -50,16 +53,21 @@ class EC2SpotPrices():
         """
 
         """
-        self.ept = DurationEndpoints(start_dt, end_dt, debug)
-        self.start, self.end = self.ept.calculate_duration_endpoints(
-                                    start_time=start_dt, end_time=end_dt
-                                )
         self.regions = get_regions()
-
-    def page_iterators(self, region):
-        self.client = boto3.client('ec2', region_name=region)
+        self.start, self.end = self.endpoints(start_dt, end_dt)
         self.page_size = read_env_variable('prices_per_page', DEFAULT_DATA) or pagesize
         self.pageconfig = {'PageSize': self.page_size}
+
+    def endpoints(self, start_dt, end_dt):
+        """
+        Rationalize start and end datetimes for data history lookup
+        """
+        self.ept = DurationEndpoints(start_dt, end_dt, debug)
+        s, e = self.ept.calculate_duration_endpoints(start_time=start_dt, end_time=end_dt)
+        return s, e
+
+    def page_iterators(self, start_dt, end_dt, region):
+        self.client = boto3.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = paginator.paginate(
                                 StartTime=start_dt,
