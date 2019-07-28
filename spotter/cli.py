@@ -173,10 +173,15 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
                             PaginationConfig={'PageSize': page_size}
                         )
         for page in page_iterator:
-            for price_dict in page['SpotPriceHistory']:
-                yield price_dict
+            try:
+                for price_dict in page['SpotPriceHistory']:
+                    yield price_dict
+            except ClientError as e:
+                logger.exception(f'Boto client error while downloading spot history data: {e}')
+                continue
     except KeyError as e:
         logger.exception(f'KeyError while processing spot history data. Schema change?: {e}')
+        continue
     except Exception as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
