@@ -79,13 +79,15 @@ def options(parser, help_menu=False):
         TYPE: argparse object, parser argument set
 
     """
-    parser.add_argument("-e", "--exclusions", dest='exclusions', action='store_true', required=False)
+    # default datetime objects when no custom datetimes supplied
+    start_dt, end_dt = default_endpoints()
+
+    parser.add_argument("-p", "--pull", dest='pull', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
-    parser.add_argument("-m", "--multiprocess", dest='multiprocess', default=False, action='store_true', required=False)
-    parser.add_argument("-s", "--sum", dest='sum', nargs='*', default=os.getcwd(), required=False)
-    parser.add_argument("-n", "--no-whitespace", dest='whitespace', action='store_false', default=True, required=False)
+    parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
+    parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -111,19 +113,33 @@ def precheck(debug):
     return True
 
 
-def endpoint_duration_calc(duration_days=1, start_time=None, end_time=None):
+def default_duration_endpoints(duration_days=read_env_variable('default_duration')):
+    """
+    Supplies the default start and end datetime objects in absence
+    of user supplied endpoints which frames time period from which
+    to begin and end retrieving spot price data from Amazon APIs.
+
+    Returns:  TYPE: tuple, containing:
+        - start (datetime), midnight yesterday
+        - end (datetime) midnight, current day
+
+    """
+    # end datetime calcs
+    dt_date = datetime.datetime.today().date()
+    dt_time = datetime.datetime.min.time()
+    end = datetime.datetime.combine(dt_date, dt_time)
+
+    # start datetime calcs
+    duration = datetime.timedelta(days=duration_days)
+    start = end - duration
+    return start, end
+
+
+def calculate_duration_endpoints(duration_days=1, start_time=None, end_time=None):
     try:
 
         if all(x is None for x in [start_time, end_time]):
-            # end datetime calcs
-            dt_date = datetime.datetime.today().date()
-            dt_time = datetime.datetime.min.time()
-            end = datetime.datetime.combine(dt_date, dt_time)
-
-            # start datetime calcs
-            duration = datetime.timedelta(days=duration_days)
-            start = end - duration
-            return start, end
+            start, end = default_duration_endpoints()
 
         elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
             start = convert_dt(start_time)
@@ -151,6 +167,7 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
     return pricelist, instance_sizes
 
 
+class SpotPrice
 def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
     """
     Summary:
@@ -233,7 +250,7 @@ def init():
         if not precheck(args.debug):
             sys.exit(exit_codes['E_BADARG']['Code'])
 
-        start, end = endpoint_duration_calc(args.start, args.end)
+        start, end = calculate_duration_endpoints(args.start, args.end)
 
         for region in get_regions():
 
