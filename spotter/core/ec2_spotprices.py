@@ -55,7 +55,6 @@ class DurationEndpoints():
 
     def default_duration_endpoints(self, duration_days=read_env_variable('default_duration')):
         """
-
         Supplies the default start and end datetime objects in absence
         of user supplied endpoints which frames time period from which
         to begin and end retrieving spot price data from Amazon APIs.
@@ -79,7 +78,7 @@ class DurationEndpoints():
         try:
 
             if all(x is None for x in [start_time, end_time]):
-                start, end = default_duration_endpoints()
+                start, end = self.default_duration_endpoints()
 
             elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
                 start = convert_dt(start_time)
@@ -104,7 +103,10 @@ class SpotPriceRetriever():
         """
 
         """
-        self.endpts = DurationEndpoints()
+        self.ept = DurationEndpoints(start_dt, end_dt, debug)
+        self.start, self.end = self.ept.calculate_duration_endpoints(
+                                    start_time=start_dt, end_time=end_dt
+                                )
         self.regions = get_regions()
         self.client = boto3.client('ec2', region_name=region)
         self.page_size = read_env_variable('prices_per_page', DEFAULT_DATA) or pagesize
