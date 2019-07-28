@@ -37,7 +37,7 @@ from spotter.lambda_utils import get_regions, read_env_variable
 from spotter import logger
 
 
-class SpotPriceRetriever():
+class EC2SpotPrices():
     """
         Generator class using pagination to return unlimited
         number of spot price history data dict
@@ -55,6 +55,8 @@ class SpotPriceRetriever():
                                     start_time=start_dt, end_time=end_dt
                                 )
         self.regions = get_regions()
+
+    def page_iterators(self, region):
         self.client = boto3.client('ec2', region_name=region)
         self.page_size = read_env_variable('prices_per_page', DEFAULT_DATA) or pagesize
         self.pageconfig = {'PageSize': self.page_size}
@@ -65,3 +67,28 @@ class SpotPriceRetriever():
                                 DryRun=debug,
                                 PaginationConfig={'PageSize': page_size}
                             )
+        return self.page_iterator
+
+    def spotprice_generator(self, debug=False):
+        """
+        Summary:
+            Generator returning up to 1000 data items at once
+
+        Returns:
+            spot price data (generator)
+
+        """
+        for paginator in self.regional_paginators():
+            try:
+                for page in paginator:
+                    for price_dict in page['SpotPriceHistory']:
+                        yield price_dict
+            except ClientError as e:
+                logger.exception(f'Boto client error while downloading spot history data: {e}')
+                continue
+            except Exception as e:
+                logger.exception(f'Unknown exception while calc start & end duration: {e}')
+
+    def regional_paginators(self, self.regions):
+        for region in self.regions:
+            return self.page_iterators(region)
