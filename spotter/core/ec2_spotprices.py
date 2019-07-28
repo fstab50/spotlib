@@ -32,63 +32,9 @@ import inspect
 import argparse
 from pyaws.session import boto3_session
 from botocore.exceptions import ClientError
+from spotter.core import DurationEndpoints
 from spotter.lambda_utils import get_regions, read_env_variable
 from spotter import logger
-
-
-class DurationEndpoints():
-    """
-    Calculates both custom and default endpoints in time which brackets
-    the time period for which spot price historical data is retrieved
-    """
-    def __init__(self, start_dt=None, end_dt=None, debug=False):
-        """
-
-        """
-        if all(x is None for x in [start_dt, end_dt]):
-            self.start, self.end = self.default_duration_endpoints()
-
-        elif any(x is not None for x in [start_dt, end_dt]):
-            x, y = self.calculate_duration_endpoints(start_dt, end_dt)
-            self.start = x if x is not None else self.default_duration_endpoints()[0]
-            self.end = y if y is not None else self.default_duration_endpoints()[1]
-
-    def default_duration_endpoints(self, duration_days=read_env_variable('default_duration')):
-        """
-        Supplies the default start and end datetime objects in absence
-        of user supplied endpoints which frames time period from which
-        to begin and end retrieving spot price data from Amazon APIs.
-
-        Returns:  TYPE: tuple, containing:
-            - start (datetime), midnight yesterday
-            - end (datetime) midnight, current day
-
-        """
-        # end datetime calcs
-        dt_date = datetime.datetime.today().date()
-        dt_time = datetime.datetime.min.time()
-        end = datetime.datetime.combine(dt_date, dt_time)
-
-        # start datetime calcs
-        duration = datetime.timedelta(days=duration_days)
-        start = end - duration
-        return start, end
-
-    def calculate_duration_endpoints(self, duration_days=1, start_time=None, end_time=None):
-        try:
-
-            if all(x is None for x in [start_time, end_time]):
-                start, end = self.default_duration_endpoints()
-
-            elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
-                start = convert_dt(start_time)
-                end = convert_dt(end_time)
-
-        except Exception as e:
-            logger.exception(f'Unknown exception while calc start & end duration: {e}')
-            sys.exit(exit_codes['E_BADARG']['Code'])
-        return  start, end
-
 
 class SpotPriceRetriever():
     """
