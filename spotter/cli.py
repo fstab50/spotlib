@@ -169,13 +169,17 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
 def s3upload(bucket, object, key):
     """Streams object to S3 for long-term storage"""
     try:
+
         s3client = boto3.client('s3')
         # dict --> str -->  bytes (utf-8 encoded)
         bcontainer = json.dumps([str(x) for x in container]).encode('utf-8')
         response = s3client.put_object(Bucket='aws01-storage', Body=bcontainer, Key=s3_fname)
+
+        statuscode = response['ResponseMetadata']['HTTPStatusCode']
+
     except ClientError as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
-    return True if response['ResponseMetadata']['HTTPStatusCode'] == 200 else False
+    return True if str(statuscode).startswith('20') else False
 
 
 def init():
