@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """
 
-xlines, GPL v3 License
+ec2 spotprice retriever, GPL v3 License
 
 Copyright (c) 2018-2019 Blake Huber
 
@@ -61,8 +60,6 @@ except Exception:
 container = []
 module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
-
-
 
 
 def modules_location():
@@ -167,7 +164,6 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
     return pricelist, instance_sizes
 
 
-class SpotPrice
 def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
     """
     Summary:
