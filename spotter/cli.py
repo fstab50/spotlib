@@ -148,8 +148,6 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
             instance_sizes = set([x['InstanceType'] for x in pricelist])
     except ClientError as e:
         return [], []
-    except KeyError as e:
-
     return pricelist, instance_sizes
 
 
@@ -181,7 +179,6 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
                 continue
     except KeyError as e:
         logger.exception(f'KeyError while processing spot history data. Schema change?: {e}')
-        continue
     except Exception as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
@@ -251,7 +248,7 @@ def init():
             container = [x for x in retreive_spotprice_generator(start, end, region)]
 
             # build unique collection of instances for this region
-            instances = set(x['InstanceType'] for x in container]))
+            instances = set([x['InstanceType'] for x in container])
 
             bucket = read_env_variable('S3_BUCKET', None)
             s3object = container
