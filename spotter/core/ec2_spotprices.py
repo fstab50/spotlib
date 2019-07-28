@@ -36,6 +36,7 @@ from spotter.core import DurationEndpoints
 from spotter.lambda_utils import get_regions, read_env_variable
 from spotter import logger
 
+
 class SpotPriceRetriever():
     """
         Generator class using pagination to return unlimited
