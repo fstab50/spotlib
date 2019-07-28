@@ -152,18 +152,21 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
         spot price data (dict), unique list of instance sizes (list
 
     """
-    client = boto3.client('ec2', region_name=region)
-    paginator = client.get_paginator('describe_spot_price_history')
-    page_size= read_env_variable('spotprices_per_page', 500)
-    page_iterator = paginator.paginate(
-                        StartTime=start_dt,
-                        EndTime=end_dt,
-                        DryRun=debug,
-                        PaginationConfig={'PageSize': page_size}
-                    )
-    for page in page_iterator:
-        for price_dict in page['SpotPriceHistory']:
-            yield price_dict
+    try:
+        client = boto3.client('ec2', region_name=region)
+        paginator = client.get_paginator('describe_spot_price_history')
+        page_size= read_env_variable('spotprices_per_page', 500)
+        page_iterator = paginator.paginate(
+                            StartTime=start_dt,
+                            EndTime=end_dt,
+                            DryRun=debug,
+                            PaginationConfig={'PageSize': page_size}
+                        )
+        for page in page_iterator:
+            for price_dict in page['SpotPriceHistory']:
+                yield price_dict
+    except Exception as e:
+        logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
 
 def s3upload(bucket, object, key):
