@@ -30,6 +30,7 @@ import datetime
 import json
 import inspect
 import argparse
+from pyaws.session import boto3_session
 from botocore.exceptions import ClientError
 from spotter.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
@@ -112,8 +113,14 @@ def precheck(debug):
 
 def endpoint_duration_calc(duration_days=1, start_time=None, end_time=None):
     try:
+
         if all(x is None for x in [start_time, end_time]):
-            end = datetime.datetime.today()
+            # end datetime calcs
+            dt_date = datetime.datetime.today().date()
+            dt_time = datetime.datetime.min.time()
+            end = datetime.datetime.combine(dt_date, dt_time)
+
+            # start datetime calcs
             duration = datetime.timedelta(days=duration_days)
             start = end - duration
             return start, end
@@ -121,6 +128,7 @@ def endpoint_duration_calc(duration_days=1, start_time=None, end_time=None):
         elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
             start = convert_dt(start_time)
             end = convert_dt(end_time)
+
     except Exception as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
         sys.exit(exit_codes['E_BADARG']['Code'])
@@ -157,7 +165,7 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
     try:
         client = boto3.client('ec2', region_name=region)
         paginator = client.get_paginator('describe_spot_price_history')
-        page_size= read_env_variable('spotprices_per_page', 500)
+        page_size= read_env_variable('prices_per_page', 500)
         page_iterator = paginator.paginate(
                             StartTime=start_dt,
                             EndTime=end_dt,
@@ -235,8 +243,7 @@ def init():
                             ]
                         )
 
-            for data in retreive_spotprice_generator(start, end, region):
-                container.append(data)
+            container = [x for x in retreive_spotprice_generator(start, end, region)]
 
             # build unique collection of instances for this region
             instances = set(x['InstanceType'] for x in container]))
