@@ -49,7 +49,7 @@ pre-build:    ## Remove residual build artifacts
 
 setup-venv: $(VENV_DIR)
 
-$(VENV_DIR): pre-build  ## Create and activiate python virtual package environment
+$(VENV_DIR): clean pre-build  ## Create and activiate python virtual package environment
 	$(PYTHON3_PATH) -m venv $(VENV_DIR)
 	. $(VENV_DIR)/bin/activate && $(PIP_CALL) install -U setuptools pip && \
 	$(PIP_CALL) install -r $(REQUIREMENT)
