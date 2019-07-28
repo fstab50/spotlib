@@ -169,7 +169,7 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
 
-def s3upload(bucket, object, key):
+def s3upload(bucket, s3object, key):
     """Streams object to S3 for long-term storage"""
     try:
 
