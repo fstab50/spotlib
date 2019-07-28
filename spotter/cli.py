@@ -140,6 +140,8 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
             instance_sizes = set([x['InstanceType'] for x in pricelist])
     except ClientError as e:
         return [], []
+    except KeyError as e:
+
     return pricelist, instance_sizes
 
 
@@ -149,7 +151,7 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
         Generator returning up to 1000 data items at once
 
     Returns:
-        spot price data (dict), unique list of instance sizes (list
+        spot price data (generator)
 
     """
     try:
@@ -165,12 +167,19 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
         for page in page_iterator:
             for price_dict in page['SpotPriceHistory']:
                 yield price_dict
+    except KeyError as e:
+        logger.exception(f'KeyError while processing spot history data. Schema change?: {e}')
     except Exception as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
 
 def s3upload(bucket, s3object, key):
-    """Streams object to S3 for long-term storage"""
+    """
+        Streams object to S3 for long-term storage
+
+    Returns:
+        Success | Failure, TYPE: bool
+    """
     try:
 
         s3client = boto3.client('s3')
@@ -178,10 +187,12 @@ def s3upload(bucket, s3object, key):
         bcontainer = json.dumps([str(x) for x in container]).encode('utf-8')
         response = s3client.put_object(Bucket='aws01-storage', Body=bcontainer, Key=s3_fname)
 
+        # http completion code
         statuscode = response['ResponseMetadata']['HTTPStatusCode']
 
     except ClientError as e:
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
+        return False
     return True if str(statuscode).startswith('20') else False
 
 
@@ -226,6 +237,9 @@ def init():
 
             for data in retreive_spotprice_generator(start, end, region):
                 container.append(data)
+
+            # build unique collection of instances for this region
+            instances = set(x['InstanceType'] for x in container]))
 
             bucket = read_env_variable('S3_BUCKET', None)
             s3object = container
