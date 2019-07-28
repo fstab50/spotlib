@@ -41,6 +41,7 @@ from spotter.variables import *
 
 
 cm = ColorMap()
+container = []
 
 try:
     from xlines.oscodes_unix import exit_codes
@@ -165,6 +166,18 @@ def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
             yield price_dict
 
 
+def s3upload(bucket, object, key):
+    """Streams object to S3 for long-term storage"""
+    try:
+        s3client = boto3.client('s3')
+        # dict --> str -->  bytes (utf-8 encoded)
+        bcontainer = json.dumps([str(x) for x in container]).encode('utf-8')
+        response = s3client.put_object(Bucket='aws01-storage', Body=bcontainer, Key=s3_fname)
+    except ClientError as e:
+        logger.exception(f'Unknown exception while calc start & end duration: {e}')
+    return True if response['ResponseMetadata']['HTTPStatusCode'] == 200 else False
+
+
 def init():
 
     parser = argparse.ArgumentParser(add_help=False)
@@ -204,10 +217,17 @@ def init():
                             ]
                         )
 
-            for data in retreive_spotprice_generator(start, end):
-                write_data(fs_location='/tmp', fname=s3_fname)
-                s3upload(data)
+            for data in retreive_spotprice_generator(start, end, region):
+                container.append(data)
 
+            bucket = read_env_variable('S3_BUCKET', None)
+            s3object = container
+            key = s3_fname
+
+            if s3upload(bucket, s3object, key):
+                logger.info(f'Successful write to s3 bucket {bucket} of object {key}')
+            else:
+                logger.warn(f'Problem writing data to s3 bucket {bucket} of object {key}')
     else:
         stdout_message(
             'Dependency check fail %s' % json.dumps(args, indent=4),
