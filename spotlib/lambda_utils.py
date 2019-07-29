@@ -27,11 +27,8 @@ import time
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-import loggers
 from _version import __version__
-
-# lambda custom log object
-logger = loggers.getLogger(__version__)
+from spotlib import logger
 
 
 def read_env_variable(arg, default=None, patterns=None):

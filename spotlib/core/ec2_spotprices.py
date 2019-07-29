@@ -55,7 +55,7 @@ class EC2SpotPrices():
         """
         self.regions = get_regions()
         self.start, self.end = self.endpoints(start_dt, end_dt)
-        self.page_size = read_env_variable('prices_per_page', DEFAULT_DATA) or pagesize
+        self.page_size = read_env_variable('prices_per_page', pagesize)
         self.pageconfig = {'PageSize': self.page_size}
 
     def endpoints(self, start_dt, end_dt):
@@ -66,12 +66,12 @@ class EC2SpotPrices():
         s, e = self.ept.calculate_duration_endpoints(start_time=start_dt, end_time=end_dt)
         return s, e
 
-    def page_iterators(self, start_dt, end_dt, region):
+    def page_iterators(self, region):
         self.client = boto3.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = paginator.paginate(
-                                StartTime=start_dt,
-                                EndTime=end_dt,
+                                StartTime=self.start,
+                                EndTime=self.end,
                                 DryRun=debug,
                                 PaginationConfig={'PageSize': page_size}
                             )

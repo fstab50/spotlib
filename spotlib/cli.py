@@ -164,7 +164,7 @@ def retreive_spotprice_data(start_dt, end_dt, debug=False):
     return pricelist, instance_sizes
 
 
-def retreive_spotprice_generator(start_dt, end_dt, region, debug=False):
+def spotprice_generator(start_dt, end_dt, region, debug=False):
     """
     Summary:
         Generator returning up to 1000 data items at once
@@ -258,7 +258,7 @@ def init():
                             ]
                         )
 
-            container = [x for x in retreive_spotprice_generator(start, end, region)]
+            container = [x for x in spotprice_generator(start, end, region)]
 
             # build unique collection of instances for this region
             instances = set([x['InstanceType'] for x in container])
