@@ -1,7 +1,11 @@
-from spotlib.colors import Colors
 from spotlib._version import __version__ as version
-from spotlib import logd
 from spotlib.statics import local_config
+
+try:
+    from libtools import Colors
+    from libtools import logd
+except Exception:
+    pass
 
 
 __author__ = 'Blake Huber'
