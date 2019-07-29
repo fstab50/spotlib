@@ -1,5 +1,5 @@
-from spotter._version import __version__ as version
-from spotter.core.endpoints import DurationEndpoints
+from spotlib._version import __version__ as version
+from spotlib.core.endpoints import DurationEndpoints
 
 
 __author__ = 'Blake Huber'

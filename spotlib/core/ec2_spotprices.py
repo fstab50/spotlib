@@ -32,9 +32,9 @@ import inspect
 import argparse
 from pyaws.session import boto3_session
 from botocore.exceptions import ClientError
-from spotter.core import DurationEndpoints
-from spotter.lambda_utils import get_regions, read_env_variable
-from spotter import logger
+from spotlib.core import DurationEndpoints
+from spotlib.lambda_utils import get_regions, read_env_variable
+from spotlib import logger
 
 
 class EC2SpotPrices():

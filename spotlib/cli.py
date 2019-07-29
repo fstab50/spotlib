@@ -31,13 +31,13 @@ import inspect
 import argparse
 from pyaws.session import boto3_session
 from botocore.exceptions import ClientError
-from spotter.lambda_utils import get_regions, read_env_variable
+from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
-from spotter.statics import local_config
-from spotter.help_menu import menu_body
-from spotter.colormap import ColorMap
-from spotter import about, Colors, logger
-from spotter.variables import *
+from spotlib.statics import local_config
+from spotlib.help_menu import menu_body
+from spotlib.colormap import ColorMap
+from spotlib import about, Colors, logger
+from spotlib.variables import *
 
 
 cm = ColorMap()

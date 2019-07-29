@@ -28,8 +28,8 @@ import os
 import sys
 import datetime
 import inspect
-from spotter.lambda_utils import get_regions, read_env_variable
-from spotter import logger
+from spotlib.lambda_utils import get_regions, read_env_variable
+from spotlib import logger
 
 
 class DurationEndpoints():
