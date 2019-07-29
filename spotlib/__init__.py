@@ -1,7 +1,7 @@
-from xlines.colors import Colors
-from xlines._version import __version__ as version
-from xlines import logd
-from xlines.statics import local_config
+from spotlib.colors import Colors
+from spotlib._version import __version__ as version
+from spotlib import logd
+from spotlib.statics import local_config
 
 
 __author__ = 'Blake Huber'

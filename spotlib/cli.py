@@ -44,13 +44,13 @@ cm = ColorMap()
 container = []
 
 try:
-    from xlines.oscodes_unix import exit_codes
+    from spotlib.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                                   # character for splitting paths (linux)
 
 except Exception:
-    from xlines.oscodes_win import exit_codes         # non-specific os-safe codes
+    from spotlib.oscodes_win import exit_codes         # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                                  # character for splitting paths (windows)
