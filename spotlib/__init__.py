@@ -20,4 +20,6 @@ except Exception:
 
 
 from spotlib.core import EC2SpotPrices
+
+# instatiate spot price request object
 retrieve = EC2SpotPrices()

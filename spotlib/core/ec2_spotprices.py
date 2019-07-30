@@ -78,6 +78,10 @@ class EC2SpotPrices():
                                 PaginationConfig={'PageSize': page_size})
         return self.page_iterator
 
+    def regional_paginators(self, self.regions):
+        for region in self.regions:
+            return self.page_iterators(region)
+
     def spotprice_generator(self, debug=False):
         """
         Summary:
@@ -97,7 +101,3 @@ class EC2SpotPrices():
                 continue
             except Exception as e:
                 logger.exception(f'Unknown exception while calc start & end duration: {e}')
-
-    def regional_paginators(self, self.regions):
-        for region in self.regions:
-            return self.page_iterators(region)
