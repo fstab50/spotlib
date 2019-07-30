@@ -1,13 +1,13 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
 #	 - Makefile, version 1.7.6                                                          #
-#	 - PROJECT:  spotter                                                                #
+#	 - PROJECT:  spotlib                                                                #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
 #---------------------------------------------------------------------------------------#
 
 
-PROJECT := spotter
+PROJECT := spotlib
 CUR_DIR = $(shell pwd)
 PYTHON_VERSION := python3
 PYTHON3_PATH := $(shell which $(PYTHON_VERSION))
