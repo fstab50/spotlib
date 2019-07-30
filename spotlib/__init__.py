@@ -17,3 +17,7 @@ try:
 
 except Exception:
     pass
+
+
+from spotlib.core import EC2SpotPrices
+retrieve = EC2SpotPrices()

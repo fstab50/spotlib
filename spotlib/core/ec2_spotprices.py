@@ -49,10 +49,12 @@ class EC2SpotPrices():
         spot price data (generator)
 
     """
-    def __init__(self, start_dt=None, end_dt=None, pagesize=None, debug=False):
+    def __init__(self, profile='default', start_dt=None, end_dt=None, pagesize=None, debug=False):
         """
 
         """
+        self.profile = profile
+        self.session = boto3.Session(profile_name=self.profile)
         self.regions = get_regions()
         self.start, self.end = self.endpoints(start_dt, end_dt)
         self.page_size = read_env_variable('prices_per_page', pagesize)
@@ -67,7 +69,7 @@ class EC2SpotPrices():
         return s, e
 
     def page_iterators(self, region):
-        self.client = boto3.client('ec2', region_name=region)
+        self.client = self.session.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = self.paginator.paginate(
                                 StartTime=self.start,
