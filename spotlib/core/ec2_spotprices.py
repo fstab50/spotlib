@@ -69,12 +69,11 @@ class EC2SpotPrices():
     def page_iterators(self, region):
         self.client = boto3.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
-        self.page_iterator = paginator.paginate(
+        self.page_iterator = self.paginator.paginate(
                                 StartTime=self.start,
                                 EndTime=self.end,
                                 DryRun=debug,
-                                PaginationConfig={'PageSize': page_size}
-                            )
+                                PaginationConfig={'PageSize': page_size})
         return self.page_iterator
 
     def spotprice_generator(self, debug=False):
