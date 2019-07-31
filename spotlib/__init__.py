@@ -12,7 +12,7 @@ try:
     from libtools import logd
 
     # global logger
-    logd.local_config = local_config
+    logd.local_config = local_confi
     logger = logd.getLogger(__version__)
 
 except Exception:

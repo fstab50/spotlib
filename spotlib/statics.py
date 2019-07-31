@@ -16,7 +16,7 @@ Module Attributes:
 import os
 import inspect
 import logging
-from spotlib.common import read_local_config, get_os
+from libtools.common import read_local_config, get_os
 from spotlib._version import __version__
 
 logger = logging.getLogger(__version__)
