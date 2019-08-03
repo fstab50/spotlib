@@ -51,7 +51,12 @@ class EC2SpotPrices():
     """
     def __init__(self, profile='default', start_dt=None, end_dt=None, pagesize=None, debug=False):
         """
-
+        Args:
+            :profile (str):
+            :start_dt (datetime): DateTime object marking data collection start
+            :end_dt (datetime): DateTime object marking data collection stop
+            :pagesize (int):  Number of spot price elements per pagesize
+            :debug (bool): debug output toggle
         """
         self.profile = profile
         self.session = boto3.Session(profile_name=self.profile)
