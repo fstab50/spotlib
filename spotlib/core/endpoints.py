@@ -97,8 +97,8 @@ class DurationEndpoints():
 
             elif any(isinstance(x, str) for x in [start_time, end_time]) \
                 and (dt_pattern.match(x) for x in [start_time, end_time]):
-                start_time = self.convert_dt(start_time)
-                end_time = self.convert_dt(end_time)
+                start = self._convert_datetime_string(start_time)
+                end = self._convert_datetime_string(end_time)
 
             elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_duration_endpoints()

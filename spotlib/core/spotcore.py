@@ -83,11 +83,12 @@ class EC2SpotPrices():
                                 PaginationConfig={'PageSize': page_size})
         return self.page_iterator
 
-    def regional_paginators(self, self.regions):
-        for region in self.regions:
+    def r_paginators(self, regions=self.regions):
+        """Regional paginator objects"""
+        for region in regions:
             return self.page_iterators(region)
 
-    def spotprice_generator(self, debug=False):
+    def spotprice_generator(self, region=None, debug=False):
         """
         Summary:
             Generator returning up to 1000 data items at once
@@ -96,7 +97,7 @@ class EC2SpotPrices():
             spot price data (generator)
 
         """
-        for paginator in self.regional_paginators():
+        for paginator in (self.r_paginators() if region is None else self.r_paginators([region])):
             try:
                 for page in paginator:
                     for price_dict in page['SpotPriceHistory']:
