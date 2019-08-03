@@ -75,15 +75,23 @@ class DurationEndpoints():
         return start, end
 
     def calculate_duration_endpoints(self, duration_days=1, start_time=None, end_time=None):
+        """
+        Calculates custom start and end points when given
+        a variety of formats including string or None
+        """
+        def convert_dt(dt_str):
+            dt_format = '%Y-%m-%dT%H:%M:%S'
+            return datetime.datetime.strptime(dt_str, dt_format)
         try:
             if all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
                 return start, end
 
-            elif all(isinstance(x, str) for x in [start_time, end_time]) and :
+            elif any(isinstance(x, str) for x in [start_time, end_time]) \
+                and (dt_pattern.match(x) for x in [start_time, end_time]):
                 start = convert_dt(start_time)
                 end = convert_dt(end_time)
 
-            if all(x is None for x in [start_time, end_time]):
+            elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_duration_endpoints()
 
         except Exception as e:
