@@ -41,12 +41,14 @@ class DurationEndpoints():
     Calculates both custom and default endpoints in time which brackets
     the time period for which spot price historical data is retrieved
     """
-    def __init__(self, start_dt=None, end_dt=None, debug=False):
+    def __init__(self, duration_days=1, start_dt=None, end_dt=None, debug=False):
         """
 
         """
+        self.d_days = duration_days
+
         if all(x is None for x in [start_dt, end_dt]):
-            self.start, self.end = self.default_duration_endpoints()
+            self.start, self.end = self.default_duration_endpoints(self.d_days)
 
         elif any(x is not None for x in [start_dt, end_dt]):
             x, y = self.calculate_duration_endpoints(start_dt, end_dt)
@@ -74,22 +76,29 @@ class DurationEndpoints():
         start = end - duration
         return start, end
 
-    def calculate_duration_endpoints(self, duration_days=1, start_time=None, end_time=None):
+    def custom_duration_endpoints(self, start_time=None, end_time=None):
         """
-        Calculates custom start and end points when given
-        a variety of formats including string or None
+            Calculates custom start and end points when given a variety of
+            formats including string or None. If both duration_days and start_time,
+            end_time values are provided, start and end times will take precedence.
+
+        Args:
+            :duration_days (int): Duration between start and end points in 24h days
+            :start_time (datetime | str | None):  midnight on provided custom date
+            :end_time (datetime | str | None):  midnight on provided custom date
+
+        Returns:
+            start, end: points in time, TYPE:  datetime regardless of input format
+
         """
-        def convert_dt(dt_str):
-            dt_format = '%Y-%m-%dT%H:%M:%S'
-            return datetime.datetime.strptime(dt_str, dt_format)
         try:
             if all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
                 return start, end
 
             elif any(isinstance(x, str) for x in [start_time, end_time]) \
                 and (dt_pattern.match(x) for x in [start_time, end_time]):
-                start = convert_dt(start_time)
-                end = convert_dt(end_time)
+                start_time = self.convert_dt(start_time)
+                end_time = self.convert_dt(end_time)
 
             elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_duration_endpoints()
@@ -98,3 +107,7 @@ class DurationEndpoints():
             logger.exception(f'Unknown exception while calc start & end duration: {e}')
             sys.exit(exit_codes['E_BADARG']['Code'])
         return  start, end
+
+    def _convert_datetime_string(self, dt_str):
+        dt_format = '%Y-%m-%dT%H:%M:%S'
+        return datetime.datetime.strptime(dt_str, dt_pattern)
