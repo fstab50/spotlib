@@ -12,14 +12,14 @@ try:
     from libtools import logd
 
     # global logger
-    logd.local_config = local_confi
+    logd.local_config = local_config
     logger = logd.getLogger(__version__)
 
 except Exception:
     pass
 
 
-from spotlib.core import EC2SpotPrices
+#from spotlib.core import EC2SpotPrices
 
 # instatiate spot price request object
-retrieve = EC2SpotPrices()
+#retrieve = EC2SpotPrices()

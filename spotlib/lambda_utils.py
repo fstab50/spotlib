@@ -25,10 +25,13 @@ import re
 import json
 import time
 import inspect
+import logging
 import boto3
 from botocore.exceptions import ClientError
-from _version import __version__
-from spotlib import logger
+from spotlib._version import __version__
+
+logger = logging.getLogger(__version__)
+logger.setLevel(logging.INFO)
 
 
 def read_env_variable(arg, default=None, patterns=None):
