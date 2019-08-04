@@ -61,16 +61,16 @@ class DurationEndpoints():
         self.d_days = duration_days
 
         if all(x is None for x in [start_dt, end_dt]):
-            self.start, self.end = self.default_duration_endpoints(self.d_days)
+            self.start, self.end = self.default_endpoints(self.d_days)
 
         elif any(x is not None for x in [start_dt, end_dt]):
             x, y = self.calculate_duration_endpoints(start_dt, end_dt)
-            self.start = x if x is not None else self.default_duration_endpoints()[0]
-            self.end = y if y is not None else self.default_duration_endpoints()[1]
+            self.start = x if x is not None else self.default_endpoints()[0]
+            self.end = y if y is not None else self.default_endpoints()[1]
 
-    def default_duration_endpoints(self, duration_days=1):
+    def default_endpoints(self, duration_days=1):
         """
-        Supplies the default start and end datetime objects in absence
+        Supplies the default start and end dates (dt objects) in absence
         of user supplied endpoints which frames time period from which
         to begin and end retrieving spot price data from Amazon APIs.
 
@@ -89,9 +89,9 @@ class DurationEndpoints():
         start = end - duration
         return start, end
 
-    def custom_duration_endpoints(self, start_time=None, end_time=None):
+    def custom_endpoints(self, start_time=None, end_time=None):
         """
-            Calculates custom start and end points when given a variety of
+            Calculates custom start and end dates when given a variety of
             formats including string or None. If both duration_days and start_time,
             end_time values are provided, start and end times will take precedence.
 
@@ -114,12 +114,18 @@ class DurationEndpoints():
                 end = self._convert_dt_string(end_time)
 
             elif any(x is None for x in [start_time, end_time]):
-                start, end = self.default_duration_endpoints()
+                start, end = self.default_endpoints()
 
         except Exception as e:
             logger.exception(f'Unknown exception while calc start & end duration: {e}')
             return self.start, self.end
         return  start, end
+
+    def custom_duration(self, duration_days):
+        """
+        Returns start and end datetimes when given a custom duration in days
+        """
+        return self.default_endpoints(duration_days)
 
     def _convert_dt_string(self, dt_str):
         dt_format = '%Y-%m-%dT%H:%M:%S'
