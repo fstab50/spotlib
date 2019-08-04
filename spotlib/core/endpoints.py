@@ -29,11 +29,24 @@ import sys
 import re
 import datetime
 import inspect
-from spotlib.lambda_utils import get_regions, read_env_variable
+from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
 
-dt_pattern = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+re_pattern = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
+
+
+def format_datetime(datetime_str):
+    """
+        Formats datetimes entered as strings, dates (no time component)
+
+    Returns:
+        datetime formatted string
+    """
+    if isinstance(datetime_str, str) and re_pattern.match(datetime_str):
+        return datetime_str
+    return ''.join([datetime_str, 'T00:00:00']) if re_date.match(datetime_str) else datetime_str
 
 
 class DurationEndpoints():
@@ -43,7 +56,7 @@ class DurationEndpoints():
     """
     def __init__(self, duration_days=1, start_dt=None, end_dt=None, debug=False):
         """
-
+        Args:
         """
         self.d_days = duration_days
 
@@ -55,7 +68,7 @@ class DurationEndpoints():
             self.start = x if x is not None else self.default_duration_endpoints()[0]
             self.end = y if y is not None else self.default_duration_endpoints()[1]
 
-    def default_duration_endpoints(self, duration_days=read_env_variable('default_duration')):
+    def default_duration_endpoints(self, duration_days=1):
         """
         Supplies the default start and end datetime objects in absence
         of user supplied endpoints which frames time period from which
@@ -96,18 +109,18 @@ class DurationEndpoints():
                 return start, end
 
             elif any(isinstance(x, str) for x in [start_time, end_time]) \
-                and (dt_pattern.match(x) for x in [start_time, end_time]):
-                start = self._convert_datetime_string(start_time)
-                end = self._convert_datetime_string(end_time)
+                and (re_pattern.match(x) for x in [start_time, end_time]):
+                start = self._convert_dt_string(start_time)
+                end = self._convert_dt_string(end_time)
 
             elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_duration_endpoints()
 
         except Exception as e:
             logger.exception(f'Unknown exception while calc start & end duration: {e}')
-            sys.exit(exit_codes['E_BADARG']['Code'])
+            return self.start, self.end
         return  start, end
 
-    def _convert_datetime_string(self, dt_str):
+    def _convert_dt_string(self, dt_str):
         dt_format = '%Y-%m-%dT%H:%M:%S'
-        return datetime.datetime.strptime(dt_str, dt_pattern)
+        return datetime.datetime.strptime(format_datetime(dt_str), dt_format)
