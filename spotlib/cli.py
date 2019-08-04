@@ -258,13 +258,14 @@ def init():
                             ]
                         )
 
-            container = [x for x in spotprice_generator(start, end, region)]
+            prices = [x for x in spotprice_generator(start, end, region)]
 
             # build unique collection of instances for this region
-            instances = set([x['InstanceType'] for x in container])
+            instances = list(set([x['InstanceType'] for x in prices]))
+            instances.sort()
 
             bucket = read_env_variable('S3_BUCKET', None)
-            s3object = container
+            s3object = prices
             key = s3_fname
 
             if s3upload(bucket, s3object, key):

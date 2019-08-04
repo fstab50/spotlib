@@ -30,10 +30,10 @@ import datetime
 import json
 import inspect
 import argparse
-from pyaws.session import boto3_session
+import boto3
 from botocore.exceptions import ClientError
 from spotlib.core import DurationEndpoints
-from spotlib.lambda_utils import get_regions, read_env_variable
+from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
 
@@ -49,7 +49,7 @@ class EC2SpotPrices():
         spot price data (generator)
 
     """
-    def __init__(self, profile='default', start_dt=None, end_dt=None, pagesize=None, debug=False):
+    def __init__(self, profile='default', start_dt=None, end_dt=None, page_size=500, debug=False):
         """
         Args:
             :profile (str):
@@ -62,28 +62,31 @@ class EC2SpotPrices():
         self.session = boto3.Session(profile_name=self.profile)
         self.regions = get_regions()
         self.start, self.end = self.endpoints(start_dt, end_dt)
-        self.page_size = read_env_variable('prices_per_page', pagesize)
+        self.page_size = page_size
         self.pageconfig = {'PageSize': self.page_size}
+        self.debug = debug
 
     def endpoints(self, start_dt, end_dt):
         """
         Rationalize start and end datetimes for data history lookup
         """
-        self.ept = DurationEndpoints(start_dt, end_dt, debug)
-        s, e = self.ept.calculate_duration_endpoints(start_time=start_dt, end_time=end_dt)
+        self.d = DurationEndpoints()
+        if any(x is None for x in [start_dt, end_dt]):
+            return self.d.start, self.d.end
+        s, e = self.d.custom_endpoints(start_time=start_dt, end_time=end_dt)
         return s, e
 
-    def page_iterators(self, region):
+    def page_iterators(self, region, page_size=500):
         self.client = self.session.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = self.paginator.paginate(
                                 StartTime=self.start,
                                 EndTime=self.end,
-                                DryRun=debug,
-                                PaginationConfig={'PageSize': page_size})
+                                DryRun=self.debug,
+                                PaginationConfig={'PageSize': self.page_size})
         return self.page_iterator
 
-    def r_paginators(self, regions=self.regions):
+    def r_paginators(self, regions=get_regions()):
         """Regional paginator objects"""
         for region in regions:
             return self.page_iterators(region)
