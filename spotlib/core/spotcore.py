@@ -61,22 +61,28 @@ class EC2SpotPrices():
         self.profile = profile
         self.session = boto3.Session(profile_name=self.profile)
         self.regions = get_regions()
-        self.start, self.end = self.endpoints(start_dt, end_dt)
+        self.start, self.end = self.set_endpoints(start_dt, end_dt)
         self.page_size = page_size
         self.pageconfig = {'PageSize': self.page_size}
         self.debug = debug
 
-    def endpoints(self, start_dt, end_dt):
+    def set_endpoints(self, start_dt, end_dt, duration=None):
         """
         Rationalize start and end datetimes for data history lookup
         """
-        self.d = DurationEndpoints()
+        self.de = DurationEndpoints()
+
         if any(x is None for x in [start_dt, end_dt]):
-            return self.d.start, self.d.end
-        s, e = self.d.custom_endpoints(start_time=start_dt, end_time=end_dt)
+            return self.de.start, self.de.end
+
+        elif duration and start_dt is None:
+            s, e = self.de.default_endpoints(duration_days=duration)
+
+        else:
+            s, e = self.de.custom_endpoints(start_time=start_dt, end_time=end_dt)
         return s, e
 
-    def page_iterators(self, region, page_size=500):
+    def _page_iterators(self, region, page_size=500):
         self.client = self.session.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = self.paginator.paginate(
@@ -86,11 +92,11 @@ class EC2SpotPrices():
                                 PaginationConfig={'PageSize': self.page_size})
         return self.page_iterator
 
-    def r_paginators(self, regions=get_regions()):
-        """Regional paginator objects"""
-        return [self.page_iterators(region) for region in regions]
+    def _region_paginators(self, regions=get_regions()):
+        """Supplies regional paginator objects, one per unique AWS region"""
+        return [self._page_iterators(region) for region in regions]
 
-    def spotprice_generator(self, region=None, debug=False):
+    def spotprice_generator(self, region, debug):
         """
         Summary:
             Generator returning up to 1000 data items at once
@@ -99,7 +105,7 @@ class EC2SpotPrices():
             spot price data (generator)
 
         """
-        for page_iterator in (self.r_paginators() if region is None else self.r_paginators([region])):
+        for page_iterator in (self._region_paginators() if region is None else self._region_paginators([region])):
             try:
                 for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
@@ -109,3 +115,6 @@ class EC2SpotPrices():
                 continue
             except Exception as e:
                 logger.exception(f'Unknown exception while calc start & end duration: {e}')
+
+    def generate_spotprices(self, region=None, debug=False)
+        return [x for x in self.spotprice_generator(region, debug)]
