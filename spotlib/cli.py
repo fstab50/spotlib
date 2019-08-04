@@ -196,7 +196,7 @@ def spotprice_generator(start_dt, end_dt, region, debug=False):
         logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
 
-def s3upload(bucket, s3object, key):
+def s3upload(bucket, s3object, key, profile='default'):
     """
         Streams object to S3 for long-term storage
 
@@ -204,8 +204,8 @@ def s3upload(bucket, s3object, key):
         Success | Failure, TYPE: bool
     """
     try:
-
-        s3client = boto3.client('s3')
+        session = boto3.Session(profile_name=profile)
+        s3client = session.client('s3')
         # dict --> str -->  bytes (utf-8 encoded)
         bcontainer = json.dumps([str(x) for x in container]).encode('utf-8')
         response = s3client.put_object(Bucket='aws01-storage', Body=bcontainer, Key=s3_fname)
