@@ -88,8 +88,7 @@ class EC2SpotPrices():
 
     def r_paginators(self, regions=get_regions()):
         """Regional paginator objects"""
-        for region in regions:
-            return self.page_iterators(region)
+        return [self.page_iterators(region) for region in regions]
 
     def spotprice_generator(self, region=None, debug=False):
         """
@@ -100,9 +99,9 @@ class EC2SpotPrices():
             spot price data (generator)
 
         """
-        for paginator in (self.r_paginators() if region is None else self.r_paginators([region])):
+        for page_iterator in (self.r_paginators() if region is None else self.r_paginators([region])):
             try:
-                for page in paginator:
+                for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
                         yield price_dict
             except ClientError as e:
