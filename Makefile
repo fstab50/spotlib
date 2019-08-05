@@ -153,7 +153,7 @@ clean-docs:    ## Remove build artifacts for documentation only
 
 
 .PHONY: clean
-clean: clean-docs clean-version ## Remove generic build artifacts common to most targets
+clean: clean-docs  ## Remove generic build artifacts common to most targets
 	@echo "Clean project directories"
 	rm -rf $(VENV_DIR) || true
 	rm -rf $(CUR_DIR)/dist || true

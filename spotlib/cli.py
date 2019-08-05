@@ -29,27 +29,23 @@ import datetime
 import json
 import inspect
 import argparse
-from pyaws.session import boto3_session
+import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
 from spotlib.core import EC2SpotPrices
 from spotlib.statics import local_config
-from spotlib.help_menu import menu_body
 from spotlib import logger
-from spotlib.variables import *
 
-
-container = []
 
 try:
-    from spotlib.oscodes_unix import exit_codes
+    from libtools.oscodes_unix import exit_codes
     os_type = 'Linux'
     user_home = os.getenv('HOME')
     splitchar = '/'                                   # character for splitting paths (linux)
 
 except Exception:
-    from spotlib.oscodes_win import exit_codes         # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes         # non-specific os-safe codes
     os_type = 'Windows'
     user_home = os.getenv('username')
     splitchar = '\\'                                  # character for splitting paths (windows)
@@ -59,6 +55,17 @@ except Exception:
 container = []
 module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
+
+
+def source_environment():
+    """
+    Sources all environment variables
+    """
+    return {
+        'duration_days': read_env_variable('default_duration'),
+        'page_size': read_env_variable('page_size', 500),
+        'bucket': read_env_variable('S3_BUCKET', None)
+    }.get(env_var, None)
 
 
 def modules_location():
@@ -109,7 +116,7 @@ def precheck(debug):
     return True
 
 
-def default_duration_endpoints(duration_days=read_env_variable('default_duration')):
+def default_endpoints(duration_days=1):
     """
     Supplies the default start and end datetime objects in absence
     of user supplied endpoints which frames time period from which
@@ -175,7 +182,7 @@ def spotprice_generator(start_dt, end_dt, region, debug=False):
     try:
         client = boto3.client('ec2', region_name=region)
         paginator = client.get_paginator('describe_spot_price_history')
-        page_size= read_env_variable('prices_per_page', 500)
+        page_size= read_env_variable('page_size', 500)
         page_iterator = paginator.paginate(
                             StartTime=start_dt,
                             EndTime=end_dt,
@@ -206,8 +213,8 @@ def s3upload(bucket, s3object, key, profile='default'):
         session = boto3.Session(profile_name=profile)
         s3client = session.client('s3')
         # dict --> str -->  bytes (utf-8 encoded)
-        bcontainer = json.dumps([str(x) for x in container]).encode('utf-8')
-        response = s3client.put_object(Bucket='aws01-storage', Body=bcontainer, Key=s3_fname)
+        bcontainer = json.dumps([str(x) for x in s3object]).encode('utf-8')
+        response = s3client.put_object(Bucket=bucket, Body=bcontainer, Key=s3_fname)
 
         # http completion code
         statuscode = response['ResponseMetadata']['HTTPStatusCode']
@@ -266,10 +273,10 @@ def init():
 
             # spot price data destination
             bucket = read_env_variable('S3_BUCKET', None)
-            s3object = prices
+            data = prices
             key = os.path.join(region, s3_fname)
 
-            _completed = s3upload(bucket, s3object, key)
+            _completed = s3upload(bucket, data, key)
             success = f'Successful write to s3 bucket {bucket} of object {key}'
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
             logger.info(success) if _completed else logger.waring(failure)

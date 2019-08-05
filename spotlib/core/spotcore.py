@@ -117,8 +117,8 @@ class EC2SpotPrices():
             except Exception as e:
                 logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
-    def generate_spotprices(self, region=None, debug=False):
+    def generate_pricedata(self, region=None, debug=False):
         """
-        Facility when iterating a generator method is unavailable
+        Facility when iterating spot price generator method is unavailable
         """
-        return [x for x in self.spotprice_generator(region, debug)]
+        return [x for x in self.spotprice_generator(region)]
