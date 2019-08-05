@@ -97,7 +97,7 @@ class EC2SpotPrices():
         """Supplies regional paginator objects, one per unique AWS region"""
         return [self._page_iterators(region) for region in regions]
 
-    def spotprice_generator(self, region=None, debug):
+    def spotprice_generator(self, region=None):
         """
         Summary:
             Generator returning up to 1000 data items at once
