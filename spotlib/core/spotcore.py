@@ -66,20 +66,21 @@ class EC2SpotPrices():
         self.pageconfig = {'PageSize': self.page_size}
         self.debug = debug
 
-    def set_endpoints(self, start_dt, end_dt, duration=None):
+    def set_endpoints(self, start_dt=None, end_dt=None, duration=None):
         """
         Rationalize start and end datetimes for data history lookup
         """
         self.de = DurationEndpoints()
 
-        if any(x is None for x in [start_dt, end_dt]):
+        if all(x is None for x in [start_dt, end_dt, duration]):
             return self.de.start, self.de.end
 
         elif duration and start_dt is None:
             s, e = self.de.default_endpoints(duration_days=duration)
 
-        else:
+        elif start_dt and end_dt:
             s, e = self.de.custom_endpoints(start_time=start_dt, end_time=end_dt)
+        self.start, self.end = s, e    # reset instance variable statics
         return s, e
 
     def _page_iterators(self, region, page_size=500):
@@ -96,7 +97,7 @@ class EC2SpotPrices():
         """Supplies regional paginator objects, one per unique AWS region"""
         return [self._page_iterators(region) for region in regions]
 
-    def spotprice_generator(self, region, debug):
+    def spotprice_generator(self, region=None, debug):
         """
         Summary:
             Generator returning up to 1000 data items at once
@@ -116,5 +117,8 @@ class EC2SpotPrices():
             except Exception as e:
                 logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
-    def generate_spotprices(self, region=None, debug=False)
+    def generate_spotprices(self, region=None, debug=False):
+        """
+        Facility when iterating a generator method is unavailable
+        """
         return [x for x in self.spotprice_generator(region, debug)]
