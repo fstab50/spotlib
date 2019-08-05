@@ -33,14 +33,13 @@ from pyaws.session import boto3_session
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
+from spotlib.core import EC2SpotPrices
 from spotlib.statics import local_config
 from spotlib.help_menu import menu_body
-from spotlib.colormap import ColorMap
-from spotlib import about, Colors, logger
+from spotlib import logger
 from spotlib.variables import *
 
 
-cm = ColorMap()
 container = []
 
 try:
@@ -246,7 +245,8 @@ def init():
         if not precheck(args.debug):
             sys.exit(exit_codes['E_BADARG']['Code'])
 
-        start, end = calculate_duration_endpoints(args.start, args.end)
+        d = EC2SpotPrices()
+        start, end = d.set_endpoints(args.start, args.end)
 
         for region in get_regions():
 
@@ -258,20 +258,34 @@ def init():
                             ]
                         )
 
-            prices = [x for x in spotprice_generator(start, end, region)]
+            prices = [x for x in d.spotprice_generator(region)]
 
             # build unique collection of instances for this region
             instances = list(set([x['InstanceType'] for x in prices]))
             instances.sort()
 
+            # spot price data destination
             bucket = read_env_variable('S3_BUCKET', None)
             s3object = prices
-            key = s3_fname
+            key = os.path.join(region, s3_fname)
+
+            _completed = s3upload(bucket, s3object, key)
+            success = f'Successful write to s3 bucket {bucket} of object {key}'
+            failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
+            logger.info(success) if _completed else logger.waring(failure)
+
+            # instance types list destination
+            bucket = 'aws01-storage'
+            s3object = instances
+            key = os.path.join(region, 'spot-instanceTypes')
 
             if s3upload(bucket, s3object, key):
-                logger.info(f'Successful write to s3 bucket {bucket} of object {key}')
-            else:
-                logger.warn(f'Problem writing data to s3 bucket {bucket} of object {key}')
+                return True and _completed
+
+            failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
+            logger.warning(failure)
+            return False
+
     else:
         stdout_message(
             'Dependency check fail %s' % json.dumps(args, indent=4),
