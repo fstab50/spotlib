@@ -1,11 +1,13 @@
 
-**libtools** | Tools & Utilities Library
+**spotlib** | Library for use with Amazon EC2 Spot Prices
 -----------------------------------------------------------
 
-PACKAGE: libtools
+PACKAGE: spotlib 
 
-``libtools``: reusable library of utility functions for use in cli programs
+``libtools``: reusable library for retrieval, conversion, and storage 
+              of Amazon EC2 spot price history data (json format).
 
-* User input processing
-* Output processing
-* Color Formatting
+Includes:
+* class for setting historical window for data
+* class for spot price data retrieval and transformation
+* 
