@@ -9,6 +9,12 @@ import boto3, json, datetime
 from spotlib.core import EC2SpotPrices
 from libtools import logger
 
+os.environ['S3_BUCKET'] = 'spotprices-dev'
+os.environ['duration_days'] = '1'
+os.environ['page_size'] = '500'
+
+
+
 #days = 7
 d = EC2SpotPrices()
 start, end = d.start, d.end
