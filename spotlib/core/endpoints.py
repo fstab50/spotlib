@@ -33,7 +33,8 @@ from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
 
-re_pattern = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+re_dt = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+re_dtnot = re.compile('\d{4}-[01]\d-[0-3]\d[\s][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
 re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
 
 
@@ -44,8 +45,12 @@ def format_datetime(datetime_str):
     Returns:
         datetime formatted string
     """
-    if isinstance(datetime_str, str) and re_pattern.match(datetime_str):
-        return datetime_str
+    def convert_dt(datetime_str):
+        dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+        return dt.isoformat()
+
+    if isinstance(datetime_str, str) and re_dt.match(datetime_str):
+        return datetime_str if not re_dtnot.match(datetime_str) else convert_dt(datetime_str)
     return ''.join([datetime_str, 'T00:00:00']) if re_date.match(datetime_str) else datetime_str
 
 
@@ -109,7 +114,7 @@ class DurationEndpoints():
                 return start, end
 
             elif any(isinstance(x, str) for x in [start_time, end_time]) \
-                and (re_pattern.match(x) for x in [start_time, end_time]):
+                and (re_dt.match(x) for x in [start_time, end_time]):
                 start = self._convert_dt_string(start_time)
                 end = self._convert_dt_string(end_time)
 
