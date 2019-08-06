@@ -213,8 +213,8 @@ def s3upload(bucket, s3object, key, profile='default'):
         session = boto3.Session(profile_name=profile)
         s3client = session.client('s3')
         # dict --> str -->  bytes (utf-8 encoded)
-        bcontainer = json.dumps(s3object, indent=4, stort_keys=True, default=str).encode('utf-8')
-        response = s3client.put_object(Bucket=bucket, Body=bcontainer, Key=s3_fname)
+        bcontainer = json.dumps(s3object, indent=4, default=str).encode('utf-8')
+        response = s3client.put_object(Bucket=bucket, Body=bcontainer, Key=key)
 
         # http completion code
         statuscode = response['ResponseMetadata']['HTTPStatusCode']
