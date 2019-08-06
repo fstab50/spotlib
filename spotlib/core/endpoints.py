@@ -40,10 +40,11 @@ re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
 
 def format_datetime(datetime_str):
     """
-        Formats datetimes entered as strings, dates (no time component)
+        Module function helper:  Formats datetimes entered
+        as strings, dates (no time component)
 
     Returns:
-        datetime formatted string
+        datetime iso formatted string
     """
     def convert_dt(datetime_str):
         dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
