@@ -19,7 +19,5 @@ except Exception:
     pass
 
 
-#from spotlib.core import EC2SpotPrices
-
-# instatiate spot price request object
-#retrieve = EC2SpotPrices()
+from spotlib.core import EC2SpotPrices as SpotPrices
+from spotlib.core import DurationEndpoints
