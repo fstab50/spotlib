@@ -160,6 +160,7 @@ clean: clean-docs  ## Remove generic build artifacts common to most targets
 	rm -rf $(CUR_DIR)/*.egg* || true
 	rm -f $(CUR_DIR)/README.rst || true
 	rm -rf $(CUR_DIR)/$(PROJECT)/__pycache__ || true
+	rm -rf $(CUR_DIR)/$(PROJECT)/core/__pycache__ || true
 	rm -rf $(CUR_DIR)/tests/__pycache__ || true
 	rm -rf $(CUR_DIR)/docs/__pycache__ || true
 	rm -rf $(CUR_DIR)/.pytest_cache || true
