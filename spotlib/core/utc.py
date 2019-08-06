@@ -8,12 +8,9 @@ Summary.
 import datetime
 
 def utc_conversion(data):
-    d = data['SpotPriceHistory'] if isinstance(data, dict) else data
-    for index, dt in enumerate([x['Timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ') for x in d]):
-        pdict = d[index]
-        pdict['Timestamp'] = dt
-        d[index] = pdict
-    return {'SpotPriceHistory': d}
+    dt = data['Timestamp'].strftime('%Y-%m-%dT%H:%M:%SZ')
+    data['Timestamp'] = dt
+    return data
 
 
 class UtcConversion():

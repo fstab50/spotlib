@@ -32,7 +32,7 @@ import inspect
 import argparse
 import boto3
 from botocore.exceptions import ClientError
-from spotlib.core import DurationEndpoints
+from spotlib.core import DurationEndpoints, utc_conversion
 from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
@@ -110,7 +110,7 @@ class EC2SpotPrices():
             try:
                 for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
-                        yield price_dict
+                        yield utc_conversion(price_dict)
             except ClientError as e:
                 logger.exception(f'Boto client error while downloading spot history data: {e}')
                 continue
