@@ -1,0 +1,7 @@
+pytest
+pytest-pylint
+pytest-mccabe
+coverage
+moto
+libtools
+pyaws
