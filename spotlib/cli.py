@@ -33,7 +33,7 @@ import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
-from spotlib.core import EC2SpotPrices
+from spotlib.core import EC2SpotPrices, UtcConversion
 from spotlib.statics import local_config
 from spotlib import logger
 

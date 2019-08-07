@@ -32,7 +32,8 @@ import inspect
 import argparse
 import boto3
 from botocore.exceptions import ClientError
-from spotlib.core import DurationEndpoints, utc_conversion
+from spotlib.core import DurationEndpoints
+from spotlib.core.utc import utc_conversion
 from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
@@ -49,7 +50,7 @@ class EC2SpotPrices():
         spot price data (generator)
 
     """
-    def __init__(self, profile='default', start_dt=None, end_dt=None, page_size=500, debug=False):
+    def __init__(self, profile='default', start_dt=None, end_dt=None, page_size=500, dt_strings=False, debug=False):
         """
         Args:
             :profile (str):
@@ -64,6 +65,7 @@ class EC2SpotPrices():
         self.start, self.end = self.set_endpoints(start_dt, end_dt)
         self.page_size = page_size
         self.pageconfig = {'PageSize': self.page_size}
+        self.dt_strings = dt_strings
         self.debug = debug
 
     def set_endpoints(self, start_dt=None, end_dt=None, duration=None):
@@ -110,7 +112,7 @@ class EC2SpotPrices():
             try:
                 for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
-                        yield utc_conversion(price_dict)
+                        yield utc_conversion(price_dict) if self.dt_strings else price_dict
             except ClientError as e:
                 logger.exception(f'Boto client error while downloading spot history data: {e}')
                 continue
