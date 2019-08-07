@@ -99,7 +99,7 @@ class EC2SpotPrices():
         """Supplies regional paginator objects, one per unique AWS region"""
         return [self._page_iterators(region) for region in regions]
 
-    def _spotprice_generator(self, region=None):
+    def _spotprice_generator(self, region, strings):
         """
         Summary:
             Generator returning up to 1000 data items at once
@@ -112,15 +112,15 @@ class EC2SpotPrices():
             try:
                 for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
-                        yield utc_conversion(price_dict) if self.dt_strings else price_dict
+                        yield utc_conversion(price_dict) if strings else price_dict
             except ClientError as e:
                 logger.exception(f'Boto client error while downloading spot history data: {e}')
                 continue
             except Exception as e:
                 logger.exception(f'Unknown exception while calc start & end duration: {e}')
 
-    def generate_pricedata(self, region=None, debug=False):
+    def generate_pricedata(self, region=None, dtstrings=False):
         """
         Facility when iterating spot price generator method is unavailable
         """
-        return {'SpotPriceHistory': [x for x in self._spotprice_generator(region)]}
+        return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}
