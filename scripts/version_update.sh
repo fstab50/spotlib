@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-PACKAGE='xlines'
+PACKAGE='spotlib'
+pkg=$(basename $0)
+pkg_path=$(cd $(dirname $0); pwd -P)
 VERSION="$1"
 PIP_CALL=$(which pip3)
 GIT=$(which git)
@@ -9,12 +11,8 @@ VENV_DIR="$ROOT/p3_venv"
 VERSION_MODULE='_version.py'
 
 # Formatting
-cyan=$(tput setaf 6)
-white=$(tput setaf 7)
-yellow=$(tput setaf 3)
-reset=$(tput sgr0)
-BOLD=`tput bold`
-UNBOLD=`tput sgr0`
+source $pkg_path/colors.sh
+source $pkg_path/std_functions.sh
 
 #
 # Current Version Search Order:
