@@ -57,6 +57,46 @@ module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
 
 
+def summary_statistics(data, instances):
+    """
+    Calculate stats across spot price data elements retrieved
+    in the current execution.  Prints to stdout
+
+    Args:
+        :data (list): list of spot price dictionaries
+        :instances (list): list of unique instance types found in data
+
+    Returns:
+        Success | Failure, TYPE:  bool
+    """
+    instance_dict, container = {}, []
+    for itype in instances:
+        try:
+            cur_type = [
+                {'SpotPrice': x['SpotPrice'], 'InstanceType': x['InstanceType']} for x in prices['SpotPriceHistory'] if x['InstanceType'] == itype
+            ]
+            instance_dict['InstanceType'] = str(itype)
+            instance_dict['average'] = sum([float(x['SpotPrice']) for x in cur_type]) / len(cur_type)
+            container.append(instance_dict)
+        except KeyError as e:
+            logger.exception('KeyError on key {} while printing summary report statistics.'.format(e))
+            continue
+    # output to stdout
+    print_ending_summary(instances, container)
+    return True
+
+
+def print_ending_summary(types_list, summary_data, region):
+    """
+    Prints summary statics to stdout at the conclusion of spot
+    price data retrieval
+    """
+    now = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
+    print('EC2 Spot price data retrieval concluded {}'.format(now))
+    print('Found {} different types of EC2 isntances in {} spot data'.format(len(types_list), region)
+    print('Instance Type distribution:')
+
+
 def source_environment():
     """
     Sources all environment variables
@@ -259,16 +299,19 @@ def init():
 
             s3_fname = '_'.join(
                             [
-                                start.strftime('%Y-%m-%dT%H:%M:%S'),
-                                end.strftime('%Y-%m-%dT%H:%M:%S'),
+                                start.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                                end.strftime('%Y-%m-%dT%H:%M:%SZ'),
                                 'all-instance-spot-prices.json'
                             ]
                         )
 
             prices = [x for x in d.spotprice_generator(region)]
 
+            # conversion of datetime obj => utc strings
+            uc = UtcConversion(prices)
+
             # build unique collection of instances for this region
-            instances = list(set([x['InstanceType'] for x in prices]))
+            instances = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
             instances.sort()
 
             # spot price data destination
@@ -279,15 +322,17 @@ def init():
             _completed = s3upload(bucket, data, key)
             success = f'Successful write to s3 bucket {bucket} of object {key}'
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
-            logger.info(success) if _completed else logger.waring(failure)
+            logger.info(success) if _completed else logger.warning(failure)
 
             # instance types list destination
             bucket = 'aws01-storage'
             s3object = instances
             key = os.path.join(region, 'spot-instanceTypes')
 
+
             if s3upload(bucket, s3object, key):
-                return True and _completed
+                return summary_statistics(instances, prices, region) and _completed
+
 
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
             logger.warning(failure)
