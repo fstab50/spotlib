@@ -1,8 +1,8 @@
 boto3
-distro
-libtools
-pkginfo
 pyaws
+distro
+pkginfo
 Pygments
 setuptools
 twine
+libtools
