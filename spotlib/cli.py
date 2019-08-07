@@ -86,14 +86,14 @@ def summary_statistics(data, instances):
     return True
 
 
-def print_ending_summary(types_list, summary_data, region):
+def print_ending_summary(itypes_list, summary_data, region):
     """
     Prints summary statics to stdout at the conclusion of spot
     price data retrieval
     """
     now = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
     print('EC2 Spot price data retrieval concluded {}'.format(now))
-    print('Found {} different types of EC2 isntances in {} spot data'.format(len(types_list), region)
+    print('Found {} different types of EC2 isntances in {} spot data'.format(len(itypes_list), region)
     print('Instance Type distribution:')
 
 
