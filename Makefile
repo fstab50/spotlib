@@ -92,7 +92,7 @@ test-help:   ## Print runtime options for running pytest unittests
 build: artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then bash $(SCRIPTS)/version_update.sh $(VERSION); \
 	else bash $(SCRIPTS)/version_update.sh; fi && . $(VENV_DIR)/bin/activate && \
-	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
+	#cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
 .PHONY: testpypi
