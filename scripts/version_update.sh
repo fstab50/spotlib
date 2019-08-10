@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGE='spotlib'
+PACKAGE=$(grep 'PACKAGE' DESCRIPTION.rst | awk -F ':' '{print $2}')
 pkg=$(basename $0)
 pkg_path=$(cd $(dirname $0); pwd -P)
 VERSION="$1"
