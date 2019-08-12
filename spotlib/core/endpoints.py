@@ -81,6 +81,7 @@ class DurationEndpoints():
         to begin and end retrieving spot price data from Amazon APIs.
 
         Returns:  TYPE: tuple, containing:
+
             - start (datetime), midnight yesterday
             - end (datetime) midnight, current day
 
@@ -136,3 +137,9 @@ class DurationEndpoints():
     def _convert_dt_string(self, dt_str):
         dt_format = '%Y-%m-%dT%H:%M:%S'
         return datetime.datetime.strptime(format_datetime(dt_str), dt_format)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return "{}(start_dt={}, end_dt={})".format(self.__class__, self.start, self.end)
