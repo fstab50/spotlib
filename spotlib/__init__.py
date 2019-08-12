@@ -21,3 +21,4 @@ except Exception:
 
 from spotlib.core import EC2SpotPrices as SpotPrices
 from spotlib.core import DurationEndpoints
+from spotlib.core import UtcConversion, utc_conversion
