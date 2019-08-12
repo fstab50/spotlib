@@ -68,6 +68,12 @@ class EC2SpotPrices():
         self.dt_strings = dt_strings
         self.debug = debug
 
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return "{}({}, {})".format(self.__class__, self.start, self.end)
+
     def set_endpoints(self, start_dt=None, end_dt=None, duration=None):
         """
         Rationalize start and end datetimes for data history lookup
@@ -99,15 +105,21 @@ class EC2SpotPrices():
         """Supplies regional paginator objects, one per unique AWS region"""
         return [self._page_iterators(region) for region in regions]
 
-    def _spotprice_generator(self, region, strings):
+    def _spotprice_generator(self, region, dt_string=False):
         """
         Summary:
             Generator returning up to 1000 data items at once
 
+        Args:
+            :region (str): AWS region code. Example: us-east-1
+            :dt_string (bool): indicates TYPE for datetime values
+                returned in spotprice data.
         Returns:
             spot price data (generator)
 
         """
+        strings = True if dt_string else self.dt_strings
+
         for page_iterator in (self._region_paginators() if region is None else self._region_paginators([region])):
             try:
                 for page in page_iterator:
