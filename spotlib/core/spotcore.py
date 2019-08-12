@@ -72,7 +72,7 @@ class EC2SpotPrices():
         return self.__repr__()
 
     def __repr__(self):
-        return "{}({}, {})".format(self.__class__, self.start, self.end)
+        return "{}(start_dt={}, end_dt={})".format(self.__class__, self.start, self.end)
 
     def set_endpoints(self, start_dt=None, end_dt=None, duration=None):
         """
