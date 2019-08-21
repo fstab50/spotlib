@@ -93,7 +93,7 @@ def print_ending_summary(itypes_list, summary_data, region):
     """
     now = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
     print('EC2 Spot price data retrieval concluded {}'.format(now))
-    print('Found {} different types of EC2 isntances in {} spot data'.format(len(itypes_list), region)
+    print('Found {} different types of EC2 isntances in {} spot data'.format(len(itypes_list), region))
     print('Instance Type distribution:')
 
 

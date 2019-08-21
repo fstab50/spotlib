@@ -216,7 +216,7 @@ def import_file_object(filename):
             file_obj = handle.read()
             dict_obj = json.loads(file_obj)
 
-    except IOError as e:
+    except OSError as e:
         logger.critical(
             'import_file_object: %s error opening %s' % (str(e), str(filename))
         )
