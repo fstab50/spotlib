@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGE=$(grep 'PACKAGE' DESCRIPTION.rst | awk -F ':' '{print $2}')
+PACKAGE=$(grep 'PACKAGE' DESCRIPTION.rst | awk -F ':' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
 pkg=$(basename $0)
 pkg_path=$(cd $(dirname $0); pwd -P)
 VERSION="$1"
