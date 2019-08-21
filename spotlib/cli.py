@@ -33,7 +33,7 @@ import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
-from spotlib.core import EC2SpotPrices, UtcConversion
+from spotlib.core import SpotPrices, UtcConversion
 from spotlib.statics import local_config
 from spotlib import logger
 
@@ -270,7 +270,9 @@ def init():
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
+
         args, unknown = options(parser)
+
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')

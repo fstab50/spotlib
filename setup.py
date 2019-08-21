@@ -32,7 +32,7 @@ import spotlib
 
 requires = [
     'boto3>=1.9.100',
-    'libtools>=0.2.3'
+    'libtools>=0.2.4'
 ]
 
 
@@ -131,7 +131,11 @@ setup(
     keywords='Amazon AWS EC2 spot prices lambda reports cost management',
     packages=find_packages(exclude=['assets', 'docs', 'reports', 'scripts', 'tests']),
     install_requires=requires,
-    setup_requires=requires,
     python_requires='>=3.6, <4',
+    entry_points={
+        'console_scripts': [
+            'spotcli=spotlib.cli:init'
+        ]
+    },
     zip_safe=False
 )
