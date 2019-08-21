@@ -68,6 +68,11 @@ class DurationEndpoints():
     def __init__(self, duration_days=1, start_dt=None, end_dt=None, debug=False):
         """
         Args:
+            :duration_days (int): Number of days between endpoint dates
+            :start_dt (datetime): Datetime start of spot price retrieval period
+            :end_dt (datetime): Datetime endpoint of spot price retrieval period
+            :debug (bool): verbose output flag
+
         """
         self.d_days = duration_days
 
