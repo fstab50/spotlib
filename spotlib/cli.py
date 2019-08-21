@@ -335,7 +335,6 @@ def init():
             if s3upload(bucket, s3object, key):
                 return summary_statistics(instances, prices, region) and _completed
 
-
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
             logger.warning(failure)
             return False
