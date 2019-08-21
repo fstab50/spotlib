@@ -121,7 +121,7 @@ setup(
     author_email=spotlib.__email__,
     license='GPL-3.0',
     classifiers=[
-        'Topic :: Software Development :: Utilities',
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
