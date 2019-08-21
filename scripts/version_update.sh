@@ -140,6 +140,9 @@ fi
 # current installed version
 get_current_version
 
+std_message "Current version: $version"
+exit 0
+
 if [ $VERSION ]; then
     update_minor_version $VERSION
 else
