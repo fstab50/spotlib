@@ -33,14 +33,19 @@ from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
 
+# precompiled regex pattern, datetime
 re_dt = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+
+# precompiled regex pattern, datetime, no "T" separator
 re_dtnot = re.compile('\d{4}-[01]\d-[0-3]\d[\s][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
+
+# precompiled regex pattern, date
 re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
 
 
 def format_datetime(datetime_str):
     """
-        Module function helper:  Formats datetimes entered
+        Helper module function:  Formats datetimes entered
         as strings, dates (no time component)
 
     Returns:
