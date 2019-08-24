@@ -294,7 +294,7 @@ def init():
         if not precheck(args.debug):
             sys.exit(exit_codes['E_BADARG']['Code'])
 
-        d = EC2SpotPrices()
+        d = SpotPrices()
         start, end = d.set_endpoints(args.start, args.end)
 
         for region in get_regions():
