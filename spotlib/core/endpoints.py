@@ -134,7 +134,8 @@ class DurationEndpoints():
                 start, end = self.default_endpoints()
 
         except Exception as e:
-            logger.exception(f'Unknown exception while calc start & end duration: {e}')
+            fx = inspect.stack()[0][3]
+            logger.exception(f'{fx}: Unknown exception while calc start & end duration: {e}')
             return self.start, self.end
         return  start, end
 

@@ -122,17 +122,26 @@ class EC2SpotPrices():
 
         for page_iterator in (self._region_paginators() if region is None else self._region_paginators([region])):
             try:
+
                 for page in page_iterator:
                     for price_dict in page['SpotPriceHistory']:
                         yield utc_conversion(price_dict) if strings else price_dict
+
             except ClientError as e:
-                logger.exception(f'Boto client error while downloading spot history data: {e}')
+                fx = inspect.stack()[0][3]
+                logger.exception(f'{fx}: Boto client error while downloading spot history data: {e}')
                 continue
             except Exception as e:
-                logger.exception(f'Unknown exception while calc start & end duration: {e}')
+                fx = inspect.stack()[0][3]
+                logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
 
     def generate_pricedata(self, region=None, dtstrings=False):
         """
-        Facility when iterating spot price generator method is unavailable
+            Facility when iterating spot price generator method is unavailable
+
+        Returns:
+            - Spot price data for all AWS region codes (region = None)
+            - Spot price data for specific AWS region code specified (e.q. region = us-east-1)
+
         """
         return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}
