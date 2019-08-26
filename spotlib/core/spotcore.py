@@ -40,8 +40,8 @@ from spotlib import logger
 
 class EC2SpotPrices():
     """
-        Generator class using pagination to return unlimited
-        number of spot price history data dict
+    Generator class using pagination to return unlimited
+    number of spot price history data dict
 
     Use:
         sprices = EC2SpotPrices()
@@ -102,13 +102,14 @@ class EC2SpotPrices():
         return self.page_iterator
 
     def _region_paginators(self, regions=get_regions()):
-        """Supplies regional paginator objects, one per unique AWS region"""
+        """
+        Supplies regional paginator objects, one per unique AWS region
+        """
         return [self._page_iterators(region) for region in regions]
 
     def _spotprice_generator(self, region, dt_string=False):
         """
-        Summary:
-            Generator returning up to 1000 data items at once
+        Generator returning up to 1000 data items per api request to AWS
 
         Args:
             :region (str): AWS region code. Example: us-east-1
@@ -116,7 +117,6 @@ class EC2SpotPrices():
                 returned in spotprice data.
         Returns:
             spot price data (generator)
-
         """
         strings = True if dt_string else self.dt_strings
 
@@ -137,11 +137,10 @@ class EC2SpotPrices():
 
     def generate_pricedata(self, region=None, dtstrings=False):
         """
-            Facility when iterating spot price generator method is unavailable
+        Facility when iterating spot price generator method is unavailable
 
         Returns:
             - Spot price data for all AWS region codes (region = None)
             - Spot price data for specific AWS region code specified (e.q. region = us-east-1)
-
         """
         return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}

@@ -82,8 +82,8 @@ class UtcConversion():
 
     def convert(self, pricelist):
         """
-            Converts datetime object embedded in a dictionary
-            schema to utc datetime string format
+        Converts datetime object embedded in a dictionary
+        schema to utc datetime string format
 
         Args:
             :pricelist (list): list of spot price dictionaries

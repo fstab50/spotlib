@@ -45,8 +45,8 @@ re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
 
 def format_datetime(datetime_str):
     """
-        Helper module function:  Formats datetimes entered
-        as strings, dates (no time component)
+    Helper module function: Formats datetime strings & dates
+    (datetime with no time component)
 
     Returns:
         datetime iso formatted string
@@ -108,9 +108,9 @@ class DurationEndpoints():
 
     def custom_endpoints(self, start_time=None, end_time=None):
         """
-            Calculates custom start and end dates when given a variety of
-            formats including string or None. If both duration_days and start_time,
-            end_time values are provided, start and end times will take precedence.
+        Calculates custom start and end dates when given a variety of
+        formats including string or None. If both duration_days and start_time,
+        end_time values are provided, start and end times will take precedence.
 
         Args:
             :duration_days (int): Duration between start and end points in 24h days
