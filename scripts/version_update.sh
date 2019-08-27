@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-PACKAGE=$(grep 'PACKAGE' DESCRIPTION.rst | awk -F ':' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+PACKAGE='spotlib'
+#PACKAGE=$(grep 'PACKAGE' DESCRIPTION.rst | awk -F ':' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
 pkg=$(basename $0)
 pkg_path=$(cd $(dirname $0); pwd -P)
 VERSION="$1"
@@ -140,8 +141,7 @@ fi
 # current installed version
 get_current_version
 
-std_message "Current version: $version"
-exit 0
+std_message "Current version indicated: $version" "INFO"
 
 if [ $VERSION ]; then
     update_minor_version $VERSION
