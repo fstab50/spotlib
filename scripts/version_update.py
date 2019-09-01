@@ -36,7 +36,7 @@ def _root():
 def current_version(module_path):
     with open(module_path) as f1:
         f2 = f1.read()
-    return f2.split('=')[1].strip()
+    return f2.split('=')[1].strip()[1:-1]
 
 
 def options(parser, help_menu=True):
@@ -57,7 +57,7 @@ def options(parser, help_menu=True):
 
 def locate_version_module(directory):
     files = list(filter(lambda x: x.endswith('.py'), os.listdir(directory)))
-    return [f for f in files if 'version' in f]
+    return [f for f in files if 'version' in f][0]
 
 
 def package_name(artifact):
@@ -71,7 +71,7 @@ def package_name(artifact):
 
 
 def update_version(projectname, modulename, force_version):
-    major, minor = current_version(modulename)
+    major, minor = split_version(current_version(modulename))
     pass
 
 
