@@ -69,7 +69,7 @@ function get_current_version(){
 
         if [ -z $pip_search ]; then
             # use local version module in package
-            version=$(grep '__version__' $PACKAGE/_version.py  | head -n 1 | awk -F"'" '{print $2}')
+            version=$(grep '__version__' "$PACKAGE/$VERSION_MODULE"  | head -n 1 | awk -F"'" '{print $2}')
             std_message "Current version ($version) found in ${yellow}$PACKAGE${reset} version module." INFO
         else
             std_message "Using version number from search for $PACKAGE in pypi repository." INFO
@@ -92,7 +92,7 @@ function update_minor_version(){
     if [ $force_version ]; then
 
         std_message "Updated_version number is: ${BOLD}$force_version${UNBOLD}" INFO
-        echo "__version__ = '${force_version}'" > $ROOT/$PACKAGE/_version.py
+        echo "__version__ = '${force_version}'" > "$ROOT/$PACKAGE/$VERSION_MODULE"
 
     else
 
@@ -101,9 +101,11 @@ function update_minor_version(){
         else
             add=$(bc -l <<< "$(echo $version | awk -F '.' '{print $3}') + 1")
         fi
+
+        echo "add: $add"
         updated_version="$(echo $version | awk -F '.' '{print $1"."$2}').$add"
-        std_message "Updated_version number is: ${BOLD}$updated_version${UNBOLD}" INFO
-        echo "__version__ = '${updated_version}'" > $ROOT/$PACKAGE/_version.py
+        std_message "Updated_version number is: ${BOLD}$updated_version${UNBOLD}" "INFO"
+        #echo "__version__ = '${updated_version}'" > "$ROOT/$PACKAGE/$VERSION_MODULE"
 
     fi
 }
@@ -141,7 +143,7 @@ fi
 # current installed version
 get_current_version
 
-std_message "Current version indicated: $version" "INFO"
+std_message "Current project version: $version" "INFO"
 
 if [ $VERSION ]; then
     update_minor_version $VERSION
