@@ -11,12 +11,15 @@ Use & Restrictions:
 import os
 import sys
 import argparse
+import inspect
 import subprocess
-import logging
-from libtools import stdout_message
+from libtools import stdout_message, logd
+from config import script_config
 
-logger = logging.getLogger('1.0')
-logger.setLevel(logging.INFO)
+# global logger
+script_version = '1.0'
+logd.local_config = script_config
+logger = logd.getLogger(script_version)
 
 try:
     from libtools.oscodes_unix import exit_codes
@@ -150,6 +153,7 @@ def valid_version(parameter, min=0, max=100):
 
     component_list = parameter.split('.')
     length = len(component_list)
+    invalid_msg = 'One or more version numerical components invalid'
 
     try:
 
@@ -158,10 +162,12 @@ def valid_version(parameter, min=0, max=100):
                 if isinstance(int(component), int) and int(component) in range(min, max + 1):
                     continue
                 else:
+                    logger.info(invalid_msg)
                     return False
 
     except ValueError as e:
-        print()
+        fx = inspect.stack()[0][3]
+        logger.exception('{}: {}'.format(fx, invalid_msg))
         return False
     return True
 
