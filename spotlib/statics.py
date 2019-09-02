@@ -63,7 +63,6 @@ else:
     log_dir = os.path.join(origin, 'logs')
     log_path = os.path.join(log_dir, log_filename)
 
-
     seed_config = {
         "PROJECT": {
             "PACKAGE": PACKAGE,
@@ -86,6 +85,7 @@ else:
     }
 
 try:
+
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
         os.chmod(log_dir, 0o755)

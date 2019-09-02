@@ -12,7 +12,11 @@ import os
 import sys
 import argparse
 import subprocess
+import logging
 from libtools import stdout_message
+
+logger = logging.getLogger('1.0')
+logger.setLevel(logging.INFO)
 
 try:
     from libtools.oscodes_unix import exit_codes
@@ -84,7 +88,7 @@ def update_signature(version, path):
     return False
 
 
-def update_version(force_version=None):
+def update_version(force_version=None, debug=False):
     """
     Summary.
         Increments project version by 1 minor increment
@@ -110,8 +114,9 @@ def update_version(force_version=None):
     # next version
     if force_version is None:
         version_new = increment_version(current)
-    else:
-        version_new = valid_version(force_version)
+
+    elif valid_version(force_version):
+        version_new = force_version
 
     stdout_message('Incremental project version: {}'.format(version_new))
     return update_signature(version_new, module_path)
@@ -137,11 +142,7 @@ def valid_version(parameter, min=0, max=100):
         True if parameter valid or None, False if invalid, TYPE: bool
 
     """
-    # type correction and validation
-    if parameter is None:
-        return True
-
-    elif isinstance(parameter, int):
+    if isinstance(parameter, int):
         return False
 
     elif isinstance(parameter, float):
@@ -160,6 +161,7 @@ def valid_version(parameter, min=0, max=100):
                     return False
 
     except ValueError as e:
+        print()
         return False
     return True
 
@@ -176,6 +178,6 @@ if __name__ == '__main__':
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    if update_version(args.set):
+    if update_version(args.set, args.debug):
         sys.exit(0)
     sys.exit(1)
