@@ -184,6 +184,10 @@ if __name__ == '__main__':
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    if update_version(args.set, args.debug):
+    if args.help:
+        parser.print_help()
+        sys.exit(0)
+
+    elif update_version(args.set, args.debug):
         sys.exit(0)
     sys.exit(1)
