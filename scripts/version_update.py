@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Handles incremental changes to project version id
 
@@ -79,7 +77,7 @@ def update_signature(version, path):
     """Updates version number module with new"""
     try:
         with open(path, 'w') as f1:
-            f1.write("__version__ = '{}'".format(version))
+            f1.write("__version__ = '{}\n'".format(version))
             return True
     except OSError:
         stdout_message('Version module unwriteable. Failed to update version')
@@ -99,9 +97,19 @@ def update_version(force_version=None):
     Returns:
         Success | Failure, TYPE: bool
     """
-    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
-    module_path = locate_version_module(PACKAGE)
-    version_new = increment_version(current_version(module_path))
+    # prerequisities
+    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst')).strip()
+    module = locate_version_module(PACKAGE)
+
+    module_path = os.path.join(_root(), PACKAGE, str(module))
+
+    # current version
+    current = current_version(module_path)
+    stdout_message('Current project version: {}'.format(current))
+
+    # next version
+    version_new = increment_version(current)
+    stdout_message('Incremental project version: {}'.format(version_new))
     return update_signature(version_new, module_path)
 
 
