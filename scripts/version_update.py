@@ -76,7 +76,7 @@ def package_name(artifact):
         f2 = f1.readlines()
     for line in f2:
         if line.startswith('PACKAGE'):
-            return line.split(':')[1]
+            return line.split(':')[1].strip()
     return None
 
 
@@ -105,7 +105,7 @@ def update_version(force_version=None, debug=False):
         Success | Failure, TYPE: bool
     """
     # prerequisities
-    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst')).strip()
+    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
     module = locate_version_module(PACKAGE)
 
     module_path = os.path.join(_root(), PACKAGE, str(module))
