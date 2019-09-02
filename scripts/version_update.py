@@ -57,9 +57,9 @@ def options(parser, help_menu=True):
         TYPE: argparse object, parser argument set
 
     """
-    parser.add_argument("-f", "--force", dest='force', nargs='*', default='', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-s", "--set-version", dest='set', default=None, nargs='?', type=str, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -105,12 +105,63 @@ def update_version(force_version=None):
 
     # current version
     current = current_version(module_path)
-    stdout_message('Current project version: {}'.format(current))
+    stdout_message('Current project version found: {}'.format(current))
 
     # next version
-    version_new = increment_version(current)
-    stdout_message('Incremental project version: {}'.format(version_new))
+    if force_version is None:
+        version_new = increment_version(current)
+    else:
+        version_new = valid_version(force_version)
+
+    stdout_message('Incremental project version next revision: {}'.format(version_new))
     return update_signature(version_new, module_path)
+
+
+def valid_version(parameter, min=0, max=100):
+    """
+    Summary.
+
+        User input validation.  Validates version string made up of integers.
+        Example:  '1.6.2'.  Each integer in the version sequence must be in
+        a range of > 0 and < 100. Maximum version string digits is 3
+        (Example: 0.2.3 )
+
+    Args:
+        :parameter (str): Version string from user input
+        :min (int): Minimum allowable integer value a single digit in version
+            string provided as a parameter
+        :max (int): Maximum allowable integer value a single digit in a version
+            string provided as a parameter
+
+    Returns:
+        True if parameter valid or None, False if invalid, TYPE: bool
+
+    """
+    # type correction and validation
+    if parameter is None:
+        return True
+
+    elif isinstance(parameter, int):
+        return False
+
+    elif isinstance(parameter, float):
+        parameter = str(parameter)
+
+    component_list = parameter.split('.')
+    length = len(component_list)
+
+    try:
+
+        if length <= 3:
+            for component in component_list:
+                if isinstance(int(component), int) and int(component) in range(min, max + 1):
+                    continue
+                else:
+                    return False
+
+    except ValueError as e:
+        return False
+    return True
 
 
 if __name__ == '__main__':
@@ -125,6 +176,6 @@ if __name__ == '__main__':
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    if update_version(args.force):
+    if update_version(args.set):
         sys.exit(0)
     sys.exit(1)
