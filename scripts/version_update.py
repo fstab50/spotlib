@@ -113,7 +113,7 @@ def update_version(force_version=None):
     else:
         version_new = valid_version(force_version)
 
-    stdout_message('Incremental project version next revision: {}'.format(version_new))
+    stdout_message('Incremental project version: {}'.format(version_new))
     return update_signature(version_new, module_path)
 
 
