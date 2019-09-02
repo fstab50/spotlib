@@ -77,7 +77,7 @@ def update_signature(version, path):
     """Updates version number module with new"""
     try:
         with open(path, 'w') as f1:
-            f1.write("__version__ = '{}\n'".format(version))
+            f1.write("__version__ = '{}'\n".format(version))
             return True
     except OSError:
         stdout_message('Version module unwriteable. Failed to update version')
