@@ -39,6 +39,17 @@ def current_version(module_path):
     return f2.split('=')[1].strip()[1:-1]
 
 
+def locate_version_module(directory):
+    files = list(filter(lambda x: x.endswith('.py'), os.listdir(directory)))
+    return [f for f in files if 'version' in f][0]
+
+
+def increment_version(current):
+    major = '.'.join(current.split('.')[:2])
+    minor = int(current.split('.')[-1][0]) + 1
+    return '.'.join([major, str(minor)])
+
+
 def options(parser, help_menu=True):
     """
     Summary:
@@ -55,24 +66,43 @@ def options(parser, help_menu=True):
     return parser.parse_known_args()
 
 
-def locate_version_module(directory):
-    files = list(filter(lambda x: x.endswith('.py'), os.listdir(directory)))
-    return [f for f in files if 'version' in f][0]
-
-
 def package_name(artifact):
     with open(artifact) as f1:
         f2 = f1.readlines()
-
     for line in f2:
         if line.startswith('PACKAGE'):
             return line.split(':')[1]
     return None
 
 
-def update_version(projectname, modulename, force_version):
-    major, minor = split_version(current_version(modulename))
-    pass
+def update_signature(version, path):
+    """Updates version number module with new"""
+    try:
+        with open(path, 'w') as f1:
+            f1.write("__version__ = '{}'".format(version))
+            return True
+    except OSError:
+        stdout_message('Version module unwriteable. Failed to update version')
+    return False
+
+
+def update_version(force_version=None):
+    """
+    Summary.
+        Increments project version by 1 minor increment
+        or hard sets to version signature specified
+
+    Args:
+        :force_version (Nonetype): Version signature (x.y.z)
+            if version number is hardset insetead of increment
+
+    Returns:
+        Success | Failure, TYPE: bool
+    """
+    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
+    module_path = locate_version_module(PACKAGE)
+    version_new = increment_version(current_version(module_path))
+    return update_signature(version_new, module_path)
 
 
 if __name__ == '__main__':
@@ -87,12 +117,6 @@ if __name__ == '__main__':
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-    PACKAGE = package_name(os.path.join(_root(), 'DESCRIPTION.rst'))
-    module = locate_version_module(PACKAGE)
-
-    sys.exit(0)
-
-    if update_version(PACKAGE, module, args.force):
+    if update_version(args.force):
         sys.exit(0)
-    else:
-        sys.exit(1)
+    sys.exit(1)
