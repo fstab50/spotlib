@@ -121,6 +121,10 @@ def update_version(force_version=None, debug=False):
     elif valid_version(force_version):
         version_new = force_version
 
+    else:
+        stdout_message('You must enter a valid version (x.y.z)')
+        sys.exit(1)
+        
     stdout_message('Incremental project version: {}'.format(version_new))
     return update_signature(version_new, module_path)
 
@@ -153,7 +157,6 @@ def valid_version(parameter, min=0, max=100):
 
     component_list = parameter.split('.')
     length = len(component_list)
-    invalid_msg = 'One or more version numerical components invalid'
 
     try:
 
@@ -162,11 +165,11 @@ def valid_version(parameter, min=0, max=100):
                 if isinstance(int(component), int) and int(component) in range(min, max + 1):
                     continue
                 else:
-                    logger.info(invalid_msg)
                     return False
 
     except ValueError as e:
         fx = inspect.stack()[0][3]
+        invalid_msg = 'One or more version numerical components invalid'
         logger.exception('{}: {}'.format(fx, invalid_msg))
         return False
     return True
