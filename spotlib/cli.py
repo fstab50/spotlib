@@ -278,8 +278,6 @@ def init():
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_BADARG']['Code'])
 
-
-
     if len(sys.argv) == 1 or args.help:
         help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
@@ -287,9 +285,7 @@ def init():
     elif args.version:
         package_version()
 
-
     elif args.pull:
-
         # validate prerun conditions
         if not precheck(args.debug):
             sys.exit(exit_codes['E_BADARG']['Code'])
@@ -307,7 +303,7 @@ def init():
                             ]
                         )
 
-            prices = [x for x in d.spotprice_generator(region)]
+            prices = [x for x in d.generate_pricedata(region)['SpotPriceHistory']]
 
             # conversion of datetime obj => utc strings
             uc = UtcConversion(prices)
@@ -330,7 +326,6 @@ def init():
             bucket = 'aws01-storage'
             s3object = instances
             key = os.path.join(region, 'spot-instanceTypes')
-
 
             if s3upload(bucket, s3object, key):
                 return summary_statistics(instances, prices, region) and _completed

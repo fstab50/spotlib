@@ -29,7 +29,6 @@ import sys
 import re
 import datetime
 import inspect
-from spotlib.lambda_utils import get_regions
 from spotlib import logger
 
 
