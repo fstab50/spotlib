@@ -53,10 +53,11 @@ class EC2SpotPrices():
     def __init__(self, profile='default', start_dt=None, end_dt=None, page_size=500, dt_strings=False, debug=False):
         """
         Args:
-            :profile (str):
+            :profile (str): iam identity with appropriate permissions for spot price functionality
             :start_dt (datetime): DateTime object marking data collection start
             :end_dt (datetime): DateTime object marking data collection stop
-            :pagesize (int):  Number of spot price elements per pagesize
+            :page_size (int):  Number of spot price elements per pagesize
+            :dt_strings (bool): if True, return spot price data with isoformat datetime strings
             :debug (bool): debug output toggle
         """
         self.profile = profile
