@@ -1,11 +1,15 @@
 """
-Local logging and configuration variables for build scripts
+Build Script local logging and configuration variables
+
     - Python3 only
+    - Requirement to set artifact which contains PACKAGE name
+    - log_mode sets type of logging (i.e. 'STREAM' or 'FILE')
+
 """
 import os
 import subprocess
 
-
+artifact = 'DESCRIPTION.rst'
 enable_logging = True
 log_filename = ''
 log_path = ''
@@ -29,7 +33,7 @@ def package_name(artifact):
 
 script_config = {
     "PROJECT": {
-        "PACKAGE": package_name(os.path.join(_root(), 'DESCRIPTION.rst')),
+        "PACKAGE": package_name(os.path.join(_root(), artifact)),
     },
     "LOGGING": {
         "ENABLE_LOGGING": enable_logging,
