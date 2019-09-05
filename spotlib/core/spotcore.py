@@ -115,7 +115,7 @@ class EC2SpotPrices():
         Returns:
             spot price data (generator)
         """
-        strings = True if dt_string else self.dt_strings
+        strings = dt_string or self.dt_strings
 
         for page_iterator in (self._region_paginators() if region is None else self._region_paginators([region])):
             try:
