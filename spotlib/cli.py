@@ -57,6 +57,28 @@ module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
 
 
+def default_endpoints(duration_days=1):
+    """
+    Supplies the default start and end datetime objects in absence
+    of user supplied endpoints which frames time period from which
+    to begin and end retrieving spot price data from Amazon APIs.
+
+    Returns:  TYPE: tuple, containing:
+        - start (datetime), midnight yesterday
+        - end (datetime) midnight, current day
+
+    """
+    # end datetime calcs
+    dt_date = datetime.datetime.today().date()
+    dt_time = datetime.datetime.min.time()
+    end = datetime.datetime.combine(dt_date, dt_time)
+
+    # start datetime calcs
+    duration = datetime.timedelta(days=duration_days)
+    start = end - duration
+    return start, end
+
+
 def summary_statistics(data, instances):
     """
     Calculate stats across spot price data elements retrieved
@@ -156,92 +178,6 @@ def precheck(debug):
     return True
 
 
-def default_endpoints(duration_days=1):
-    """
-    Supplies the default start and end datetime objects in absence
-    of user supplied endpoints which frames time period from which
-    to begin and end retrieving spot price data from Amazon APIs.
-
-    Returns:  TYPE: tuple, containing:
-        - start (datetime), midnight yesterday
-        - end (datetime) midnight, current day
-
-    """
-    # end datetime calcs
-    dt_date = datetime.datetime.today().date()
-    dt_time = datetime.datetime.min.time()
-    end = datetime.datetime.combine(dt_date, dt_time)
-
-    # start datetime calcs
-    duration = datetime.timedelta(days=duration_days)
-    start = end - duration
-    return start, end
-
-
-def calculate_duration_endpoints(duration_days=1, start_time=None, end_time=None):
-    try:
-
-        if all(x is None for x in [start_time, end_time]):
-            start, end = default_duration_endpoints()
-
-        elif all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
-            start = convert_dt(start_time)
-            end = convert_dt(end_time)
-
-    except Exception as e:
-        logger.exception(f'Unknown exception while calc start & end duration: {e}')
-        sys.exit(exit_codes['E_BADARG']['Code'])
-    return  start, end
-
-
-def retreive_spotprice_data(start_dt, end_dt, debug=False):
-    """
-    Returns:
-        spot price data (dict), unique list of instance sizes (list)
-
-    """
-    try:
-        for region in get_regions():
-            client = boto3.client('ec2', region_name=region)
-            pricelist = client.describe_spot_price_history(StartTime=start, EndTime=end).get(['SpotPriceHistory'])
-            instance_sizes = set([x['InstanceType'] for x in pricelist])
-    except ClientError as e:
-        return [], []
-    return pricelist, instance_sizes
-
-
-def spotprice_generator(start_dt, end_dt, region, debug=False):
-    """
-    Summary:
-        Generator returning up to 1000 data items at once
-
-    Returns:
-        spot price data (generator)
-
-    """
-    try:
-        client = boto3.client('ec2', region_name=region)
-        paginator = client.get_paginator('describe_spot_price_history')
-        page_size= read_env_variable('page_size', 500)
-        page_iterator = paginator.paginate(
-                            StartTime=start_dt,
-                            EndTime=end_dt,
-                            DryRun=debug,
-                            PaginationConfig={'PageSize': page_size}
-                        )
-        for page in page_iterator:
-            try:
-                for price_dict in page['SpotPriceHistory']:
-                    yield price_dict
-            except ClientError as e:
-                logger.exception(f'Boto client error while downloading spot history data: {e}')
-                continue
-    except KeyError as e:
-        logger.exception(f'KeyError while processing spot history data. Schema change?: {e}')
-    except Exception as e:
-        logger.exception(f'Unknown exception while calc start & end duration: {e}')
-
-
 def s3upload(bucket, s3object, key, profile='default'):
     """
         Streams object to S3 for long-term storage
@@ -293,6 +229,9 @@ def init():
         d = SpotPrices()
         start, end = d.set_endpoints(args.start, args.end)
 
+        # global container for ec2 instance size types
+        instance_sizes = []
+
         for region in get_regions():
 
             s3_fname = '_'.join(
@@ -309,8 +248,8 @@ def init():
             uc = UtcConversion(prices)
 
             # build unique collection of instances for this region
-            instances = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
-            instances.sort()
+            regional_sizes = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
+            instance_sizes.extend(regional_sizes)
 
             # spot price data destination
             bucket = read_env_variable('S3_BUCKET', None)
@@ -322,17 +261,22 @@ def init():
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
             logger.info(success) if _completed else logger.warning(failure)
 
-            # instance types list destination
-            bucket = 'aws01-storage'
-            s3object = instances
-            key = os.path.join(region, 'spot-instanceTypes')
 
-            if s3upload(bucket, s3object, key):
-                return summary_statistics(instances, prices, region) and _completed
+        # instance sizes across analyzed regions
+        instance_sizes = list(set(instance_sizes))
+        instance_sizes.sort()
 
-            failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
-            logger.warning(failure)
-            return False
+        # instance types list destination
+        bucket = 'aws01-storage'
+        s3object = instance_sizes
+        key = os.path.join(region, 'spot-instanceTypes')
+
+        if s3upload(bucket, s3object, key):
+            return summary_statistics(instance_sizes, prices, region) and _completed
+
+        failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
+        logger.warning(failure)
+        return False
 
     else:
         stdout_message(
