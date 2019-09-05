@@ -34,8 +34,7 @@ from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
 from spotlib.core import SpotPrices, UtcConversion
-from spotlib.statics import local_config
-from spotlib import logger
+from spotlib import about, logger
 
 
 try:
@@ -92,34 +91,41 @@ def summary_statistics(data, instances):
         Success | Failure, TYPE:  bool
     """
     instance_dict, container = {}, []
+
     for itype in instances:
         try:
             cur_type = [
-                {'SpotPrice': x['SpotPrice'], 'InstanceType': x['InstanceType']} for x in prices['SpotPriceHistory'] if x['InstanceType'] == itype
+                x['SpotPrice'] for x in data['SpotPriceHistory'] if x['InstanceType'] == itype
             ]
-            instance_dict['InstanceType'] = str(itype)
-            instance_dict['average'] = sum([float(x['SpotPrice']) for x in cur_type]) / len(cur_type)
-            container.append(instance_dict)
         except KeyError as e:
             logger.exception('KeyError on key {} while printing summary report statistics.'.format(e))
             continue
+
+        instance_dict['InstanceType'] = str(itype)
+        instance_dict['AvgPrice'] = sum([float(x['SpotPrice']) for x in cur_type]) / len(cur_type)
+        container.append(instance_dict)
     # output to stdout
     print_ending_summary(instances, container)
     return True
 
 
-def print_ending_summary(itypes_list, summary_data, region):
+def print_ending_summary(itypes_list, summary_data):
     """
     Prints summary statics to stdout at the conclusion of spot
     price data retrieval
     """
     now = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
+    tab = '\t'.expandtabs(4)
     print('EC2 Spot price data retrieval concluded {}'.format(now))
-    print('Found {} different types of EC2 isntances in {} spot data'.format(len(itypes_list), region))
+    print('Found {} unique EC2 size types in spot data'.format(len(itypes_list)))
     print('Instance Type distribution:')
+    for itype in itypes_list:
+        for instance in container:
+            if instance['InstanceType'] == itype:
+                print('{} - {}'.format(tab, itype, instance['AvgPrice']))
 
 
-def source_environment():
+def source_environment(env_variable):
     """
     Sources all environment variables
     """
@@ -127,7 +133,7 @@ def source_environment():
         'duration_days': read_env_variable('default_duration'),
         'page_size': read_env_variable('page_size', 500),
         'bucket': read_env_variable('S3_BUCKET', None)
-    }.get(env_var, None)
+    }.get(env_variable, None)
 
 
 def modules_location():
@@ -261,7 +267,6 @@ def init():
             failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
             logger.info(success) if _completed else logger.warning(failure)
 
-
         # instance sizes across analyzed regions
         instance_sizes = list(set(instance_sizes))
         instance_sizes.sort()
@@ -272,7 +277,7 @@ def init():
         key = os.path.join(region, 'spot-instanceTypes')
 
         if s3upload(bucket, s3object, key):
-            return summary_statistics(instance_sizes, prices, region) and _completed
+            return summary_statistics(instance_sizes, prices, region)
 
         failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
         logger.warning(failure)
