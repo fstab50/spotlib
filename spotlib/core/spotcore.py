@@ -24,12 +24,7 @@ SOFTWARE.
 
 """
 
-import os
-import sys
-import datetime
-import json
 import inspect
-import argparse
 import boto3
 from botocore.exceptions import ClientError
 from spotlib.core import DurationEndpoints
@@ -92,14 +87,15 @@ class EC2SpotPrices():
         self.start, self.end = s, e    # reset instance variable statics
         return s, e
 
-    def _page_iterators(self, region, page_size=500):
+    def _page_iterators(self, region):
         self.client = self.session.client('ec2', region_name=region)
         self.paginator = self.client.get_paginator('describe_spot_price_history')
         self.page_iterator = self.paginator.paginate(
                                 StartTime=self.start,
                                 EndTime=self.end,
                                 DryRun=self.debug,
-                                PaginationConfig={'PageSize': self.page_size})
+                                PaginationConfig={'PageSize': self.page_size}
+                            )
         return self.page_iterator
 
     def _region_paginators(self, regions=get_regions()):
