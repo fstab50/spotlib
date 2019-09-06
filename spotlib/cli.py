@@ -90,7 +90,7 @@ def default_endpoints(duration_days=1):
 def help_menu():
     """Print help menu options"""
     pass
-    
+
 
 def summary_statistics(data, instances):
     """
@@ -254,8 +254,7 @@ def init():
 
     elif args.pull:
         # validate prerun conditions
-        defaults = precheck(args.debug):
-            sys.exit(exit_codes['E_BADARG']['Code'])
+        defaults = precheck(args.debug)
 
         d = SpotPrices()
         start, end = d.set_endpoints(args.start, args.end)
@@ -320,3 +319,4 @@ def init():
     Please ensure you have both read and write access to local filesystem. """
     logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['E_MISC']['Code']))
     print(failure)
+    return sys.exit(exit_codes['E_BADARG']['Code'])
