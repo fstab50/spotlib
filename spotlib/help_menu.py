@@ -22,8 +22,8 @@ tab = '\t'.expandtabs(24)
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-        rst + ACCENT + PACKAGE + rst + ' --sum <values> ' +
-        lbrct + '--no-whitespace' + vdiv + '--multiprocess' + rbrct
+        ACCENT + PACKAGE + rst + ' --start <values> ' +
+        lbrct + '--end <values>' + rst
     )
 
 url_doc = c.URL + 'http://spotlib.readthedocs.io' + rst
@@ -41,35 +41,24 @@ menu_body = menu_title + c.BOLD + """
 
         $ """ + synopsis_cmd + """
 
-                        -s, --sum
-                       [-e, --exclusions ]
+                        -s, --start <datetime>
+                        -e, --end <datetime>
                        [-c, --configure  ]
                        [-d, --debug  ]
                        [-h, --help   ]
-                       [-m, --multiprocess  ]
-                       [-n, --no-whitespace  ]
                        [-V, --version  ]
     """ + c.BOLD + """
   OPTIONS
-        -s, --sum""" + rst + """ (string): Sum the counts of all lines contained
-            in filesystem objects referenced in the sum parameter
+        -s, --start""" + rst + """ (string): start datetime (2019-07-15T00:00:00)
     """ + c.BOLD + """
         -c, --configure""" + rst + """:  Configure runtime parameter via the cli
             menu. Change display format, color scheme, etc values
     """ + c.BOLD + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + c.BOLD + """
-        -e, --exclusions""" + rst + """:  Print out list of file type extensions
-            and directories excluded from line count calculations
+        -e, --end""" + rst + """ (string): end datetime (2019-07-14T00:00:00)
     """ + c.BOLD + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
     """ + c.BOLD + """
-        -m, --multiprocess""" + rst + """:  Use multiple  cpu cores for counting
-            lines of text in expansive filesystem directories
-    """ + c.BOLD + """
-        -w, --no-whitespace""" + rst + """:  Exclude lines containing whitespace
-            from total line counts for all objects
-    """ + c.BOLD + """
         -V, --version""" + rst + """:  Print package version  and copyright info
-    """ + c.BOLD + """
-  LEGEND""" + rst
+    """
