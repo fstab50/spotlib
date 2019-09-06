@@ -1,6 +1,6 @@
 """
 
-EC2 SpotPrice Utils, GPL v3 License
+EC2 SpotPrice Lib, GPL v3 License
 
 Copyright (c) 2018-2019 Blake Huber
 
@@ -38,8 +38,16 @@ class EC2SpotPrices():
     Generator class using pagination to return unlimited
     number of spot price history data dict
 
+    Methods:
+        :set_endpoints (user callable): sets start, end date times for which to request price data
+        :_page_iterators: instantiates, constructs a page iterator object
+        :_region_paginators (generator): creates regional paginators; one unique per region
+        :_spotprice_generator (generator): which uses paginators to request spot price data
+        :generate_pricedata (generator, user callable): rollup method for access all child methods
+
     Use:
-        sprices = EC2SpotPrices()
+        sp = SpotPrices()
+        prices = sp.generate_pricedata('us-east-1')
 
     Returns:
         spot price data (generator)

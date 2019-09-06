@@ -1,6 +1,6 @@
 """
 
-EC2 SpotPrice Utils, GPL v3 License
+EC2 SpotPrice Lib, GPL v3 License
 
 Copyright (c) 2018-2019 Blake Huber
 
@@ -63,6 +63,17 @@ class DurationEndpoints():
     """
     Calculates both custom and default endpoints in time which brackets
     the time period for which spot price historical data is retrieved
+
+    Methods:
+        :default_endpoints: construct default start, end datetimes;
+            i.e. midnight previous day to midnight current day 
+        :custom_endpoints: construct customised start, end datetimes via endpoints
+        :custom_duration: construct customised start, end datetimes via duration only
+        :_convert_dt_string: method to reliably transform various datetime inputs into dt strings
+
+    Use:
+        from spotlib import DurationEndpoints
+        d = DurationEndpoints()
     """
     def __init__(self, duration_days=1, start_dt=None, end_dt=None, debug=False):
         """
