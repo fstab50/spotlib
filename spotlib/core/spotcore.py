@@ -46,7 +46,8 @@ class EC2SpotPrices():
         :generate_pricedata (generator, user callable): rollup method for access all child methods
 
     Use:
-        sp = SpotPrices()
+        from spotlib import SpotPrices
+        sp = SpotPrices(page_size=1000)
         prices = sp.generate_pricedata('us-east-1')
 
     Returns:
