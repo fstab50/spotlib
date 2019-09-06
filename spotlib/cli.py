@@ -56,6 +56,15 @@ module = os.path.basename(__file__)
 iloc = os.path.abspath(os.path.dirname(__file__))     # installed location of modules
 
 
+def _debug_output(*args):
+    """additional verbose information output"""
+    for arg in args:
+        if os.path.isfile(arg):
+            print('Filename {}'.format(arg.strip(), 'lower'))
+        elif str(arg):
+            print('String {} = {}'.format(getattr(arg.strip(), 'title'), arg))
+
+
 def default_endpoints(duration_days=1):
     """
     Supplies the default start and end datetime objects in absence
@@ -77,6 +86,11 @@ def default_endpoints(duration_days=1):
     start = end - duration
     return start, end
 
+
+def help_menu():
+    """Print help menu options"""
+    pass
+    
 
 def summary_statistics(data, instances):
     """
@@ -176,12 +190,23 @@ def precheck(debug):
     Runtime Dependency Checks: postinstall artifacts, environment
     """
     try:
-        pass
+
+        home_dir = os.expanduser('~')
+        config_file = os.path.join(home_dir, '.spotlib.json')
+
+        if os.path.exists(config_file):
+            with open(config_file, 'r') as f1:
+                defaults = json.loads(f1.read())
+        else:
+            from spotlib.defaults import defaults
+
+        _debug_output(home_dir, config_file)
+
     except OSError:
         fx = inspect.stack()[0][3]
         logger.exception('{}: Problem installing user config files. Exit'.format(fx))
         return False
-    return True
+    return defaults
 
 
 def s3upload(bucket, s3object, key, profile='default'):
@@ -229,7 +254,7 @@ def init():
 
     elif args.pull:
         # validate prerun conditions
-        if not precheck(args.debug):
+        defaults = precheck(args.debug):
             sys.exit(exit_codes['E_BADARG']['Code'])
 
         d = SpotPrices()
