@@ -121,6 +121,7 @@ class EC2SpotPrices():
             :region (str): AWS region code. Example: us-east-1
             :dt_string (bool): indicates TYPE for datetime values
                 returned in spotprice data.
+
         Returns:
             spot price data (generator)
         """
