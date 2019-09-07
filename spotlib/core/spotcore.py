@@ -142,9 +142,13 @@ class EC2SpotPrices():
                 fx = inspect.stack()[0][3]
                 logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
 
-    def generate_pricedata(self, region=None, dtstrings=False):
+    def generate_pricedata(self, region, dtstrings=False):
         """
         Facility when iterating spot price generator method is unavailable
+
+        Args:
+            :region (str): AWS region code
+            :dtstrings (bool): True returns datetime in str format, DEFAULT: False
 
         Returns:
             - Spot price data for all AWS region codes (region = None)
