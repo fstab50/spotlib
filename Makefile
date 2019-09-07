@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------#
 #                                                                                       #
-#	 - Makefile, version 1.7.6                                                          #
+#	 - Makefile, version 1.8.2                                                          #
 #	 - PROJECT:  spotlib                                                                #
 # 	 - copyright, Blake Huber.  All rights reserved.                                    #
 #                                                                                       #
