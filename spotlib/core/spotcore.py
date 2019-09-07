@@ -144,14 +144,15 @@ class EC2SpotPrices():
 
     def generate_pricedata(self, region, dtstrings=False):
         """
-        Facility when iterating spot price generator method is unavailable
+            Rollup facility for ease generation of regional spot price data.
+            Iterates child paginator and generator methods to retrieve spot prices.
 
         Args:
             :region (str): AWS region code
             :dtstrings (bool): True returns datetime in str format, DEFAULT: False
 
         Returns:
-            - Spot price data for all AWS region codes (region = None)
-            - Spot price data for specific AWS region code specified (e.q. region = us-east-1)
+            - Spot price data for specific AWS region code
+              specified (e.q. region = us-east-1)
         """
         return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}
