@@ -66,7 +66,7 @@ class DurationEndpoints():
 
     Methods:
         :default_endpoints: construct default start, end datetimes;
-            i.e. midnight previous day to midnight current day 
+            i.e. midnight previous day to midnight current day
         :custom_endpoints: construct customised start, end datetimes via endpoints
         :custom_duration: construct customised start, end datetimes via duration only
         :_convert_dt_string: method to reliably transform various datetime inputs into dt strings
@@ -142,7 +142,6 @@ class DurationEndpoints():
 
             elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_endpoints()
-
         except Exception as e:
             fx = inspect.stack()[0][3]
             logger.exception(f'{fx}: Unknown exception while calc start & end duration: {e}')
