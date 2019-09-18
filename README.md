@@ -7,9 +7,9 @@
 
 Python 3 library for retrieving historical spot prices from [Amazon EC2](http://aws.amazon.com/ec2) Service.
 
-Internally, spotlib utilises a paged generator architecture to achieve maximum performance with non-blocking state transition.
+Internally, **spotlib** utilises a paged generator architecture to achieve maximum performance with non-blocking state transition.
 
-Spotlib can be used as a library or directly as a cli application, as spotlib also includes a **spotcli**, a cli binary which can be used directly for retrieving spot price data.
+Although **spotlib** was designed for maximum flexibility as a library, **spotlib** also includes a cli helper application, [spotcli](#spotcli), a cli binary which can be used directly for retrieving spot price data.
 
 **Version**: 0.1.1
 
