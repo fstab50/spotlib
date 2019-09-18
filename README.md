@@ -25,7 +25,7 @@ Spotlib can be used as a library or directly as a cli application, as spotlib al
     * [**Library**](#use)
     * [**spotcli**](#spotcli)
 
-* [**Screenshots**](#screenshots)
+* [**IAM Permissions**](#iam-permissions)
 
 * [**Author & Copyright**](#author--copyright)
 
@@ -83,7 +83,9 @@ $  sudo -H pip3 install spotlib
     ```python
     >>> from spotlib import SpotPrices, DurationEndpoints
     >>> sp = SpotPrices()
+    ```
 
+    ```
     # Display datetime endpoints
     >>> sp.start
 
@@ -106,6 +108,10 @@ $  sudo -H pip3 install spotlib
     >>> sp.generate_pricedata(region='eu-west-1')
     ```
 
+--
+
+[back to the top](#top)
+
 * * *
 <a name="spotcli"></a>
 ### Use / spotcli
@@ -119,6 +125,20 @@ To display the help menu for **spotcli**, the included command line helper appli
 <p align="center">
     <a href="http://images.awspros.world/spotlib/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
 </p>
+
+--
+
+[back to the top](#top)
+
+* * *
+IAM Permissions
+
+Either an Identity and Access Management user or role must be used to retrieve spot price data from AWS. The following is the minimum permissions required to retrieve data:
+
+```
+readspotpricedata
+listregions
+```
 
 --
 
