@@ -102,11 +102,23 @@ $  sudo -H pip3 install spotlib
     >>> start, end = sp.set_endpoints(duration=10)
     ```
 
-3. Pull data for the custom time period for a particular region:
+3. Retrieve spot price data for the custom time period for a particular region:
 
     ```python
-    >>> sp.generate_pricedata(region='eu-west-1')
+    >>> prices = sp.generate_pricedata(region='eu-west-1')
     ```
+
+4. Examine price data returned:
+
+    ```python
+    >>> from libtools.js import export_iterobject
+    >>> export_iterobject(prices)
+    ```
+
+
+<p>
+    <a href="http://images.awspros.world/spotlib/use-library.png" target="_blank"><img src="./assets/use-library.png">
+</p>
 
 --
 
