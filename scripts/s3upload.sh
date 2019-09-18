@@ -22,7 +22,7 @@ function _valid_iamuser(){
     ##
     local iamuser="$1"
 
-    if [[ $(aws sts get-caller-identity --profile $PROFILE 2>/dev/null) ]]; then
+    if [[ $(aws sts get-caller-identity --profile $iamuser 2>/dev/null) ]]; then
         return 0
     fi
     return 1
