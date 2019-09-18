@@ -47,6 +47,8 @@ Spotlib can be used as a library or directly as a cli application, as spotlib al
 
 * [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/index.html) Python SDK for Amazon Web Services
 
+* [Libtools](https://github.com/fstab50/libtools) General utilities library
+
 
 [back to the top](#top)
 
@@ -76,19 +78,33 @@ $  sudo -H pip3 install spotlib
 
 **spotlib** can be used most flexibly as an importable library:
 
-```python
->>> from spotlib import SpotPrices, DurationEndpoints
->>> sp = SpotPrices()
+1. Initial Setup:  Default endpoints for data retreival is a period of 1 day
 
-# Display datetime endpoints
->>> sp.start
+    ```python
+    >>> from spotlib import SpotPrices, DurationEndpoints
+    >>> sp = SpotPrices()
 
-datetime.datetime(2019, 9, 17, 0, 0)
+    # Display datetime endpoints
+    >>> sp.start
 
->>> sp.end
+    datetime.datetime(2019, 9, 17, 0, 0)
 
-datetime.datetime(2019, 9, 18, 0, 0)
-```
+    >>> sp.end
+
+    datetime.datetime(2019, 9, 18, 0, 0)
+    ```
+
+2. Set custom endpoints (start & end date times):
+
+    ```python
+    >>> start, end = sp.set_endpoints(duration=10)
+    ```
+
+3. Pull data for the custom time period for a particular region:
+
+    ```python
+    >>> sp.generate_pricedata(region='eu-west-1')
+    ```
 
 * * *
 <a name="spotcli"></a>
