@@ -96,7 +96,7 @@ $  sudo -H pip3 install spotlib
     datetime.datetime(2019, 9, 18, 0, 0)
     ```
 
-2. Set custom endpoints (start & end date times):
+2. Set custom endpoints (start & end date times, 10 days back from today):
 
     ```python
     >>> start, end = sp.set_endpoints(duration=10)
