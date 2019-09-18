@@ -49,24 +49,6 @@ Spotlib can be used as a library or directly as a cli application, as spotlib al
 [back to the top](#top)
 
 * * *
-
-## Program Options
-
-To display the **spotlib** help menu:
-
-```bash
-    $ spotlib --help
-```
-
-<p align="center">
-    <a href="http://images.awspros.world/spotlib/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
-</p>
-
---
-
-[back to the top](#top)
-
-* * *
 ## Installation
 
 **spotlib** may be installed on Linux via [pip, python package installer](https://pypi.org/project/pip) in one of two methods:
@@ -82,6 +64,41 @@ To install **spotlib** for all users (Linux):
 ```
 $  sudo -H pip3 install spotlib
 ```
+
+[back to the top](#top)
+
+* * *
+## Use
+* * *
+### Library or Stadalone  
+
+**spotlib** can be used most flexibly as an importable library:
+
+```python
+>>> from spotlib import SpotPrices, DurationEndpoints
+>>> sp = SpotPrices()
+
+# Display datetime endpoints
+>>> sp.start
+
+datetime.datetime(2019, 9, 17, 0, 0)
+
+>>> sp.end
+
+datetime.datetime(2019, 9, 18, 0, 0)
+```
+
+To display the help menu for **spotcli**, the included command line helper application:
+
+```bash
+    $ spotcli --help
+```
+
+<p align="center">
+    <a href="http://images.awspros.world/spotlib/help-menu.png" target="_blank"><img src="./assets/help-menu.png">
+</p>
+
+--
 
 [back to the top](#top)
 
