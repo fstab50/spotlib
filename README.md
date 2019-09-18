@@ -147,11 +147,33 @@ IAM Permissions
 
 Either an Identity and Access Management user or role must be used to retrieve spot price data from AWS. The following is the minimum permissions required to retrieve data:
 
-```
-readspotpricedata
-listregions
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ec2:Describe*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:ListMetrics",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:Describe*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
 ```
 
+Alternatively, the AWS Managed Policy 'AmazonEC2ReadOnlyAccess' can be used via the following ARN:
+
+* arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
+
+The permissions above for IAM are a subset of the AmazonEC2ReadOnlyAccess policy.  Either should work without problems.
 --
 
 [back to the top](#top)
