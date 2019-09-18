@@ -41,12 +41,20 @@ menu_body = menu_title + c.BOLD + """
 
         $ """ + synopsis_cmd + """
 
-                        -l, --list  <methods> | <regions>
+                        -s, --start  <datetime>
+                        -e, --end  <datetime>
+                       [-l, --list  <methods> | <regions>  ]
                        [-d, --debug    ]
                        [-h, --help     ]
                        [-V, --version  ]
     """ + c.BOLD + """
   OPTIONS
+    """ + c.BOLD + """
+        -s, --start""" + rst + """:  Datetime of start of price sampling period
+            (example:  2019-09-03T00:00:00)
+    """ + c.BOLD + """
+        -e, --end""" + rst + """:  Datetime of end of the price sampling period
+            (example:  2019-09-04T23:59:59)
     """ + c.BOLD + """
         -l, --list""" + rst + """ <value>:  List available method calls or AWS
             region codes
