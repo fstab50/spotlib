@@ -174,6 +174,7 @@ Alternatively, the AWS Managed Policy 'AmazonEC2ReadOnlyAccess' can be used via 
 * arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
 
 The permissions above for IAM are a subset of the AmazonEC2ReadOnlyAccess policy.  Either should work without problems.
+
 --
 
 [back to the top](#top)
