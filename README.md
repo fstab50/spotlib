@@ -21,7 +21,9 @@ Spotlib can be used as a library or directly as a cli application, as spotlib al
 
 * [**Installation**](#installation)
 
-* [**Use**](#program-options)
+* [**Use**](#use)
+    * [**Library**](#use)
+    * [**spotcli**](#spotcli)
 
 * [**Screenshots**](#screenshots)
 
@@ -70,7 +72,7 @@ $  sudo -H pip3 install spotlib
 * * *
 ## Use
 * * *
-### Library or Stadalone  
+### Use / Library
 
 **spotlib** can be used most flexibly as an importable library:
 
@@ -87,6 +89,10 @@ datetime.datetime(2019, 9, 17, 0, 0)
 
 datetime.datetime(2019, 9, 18, 0, 0)
 ```
+
+* * *
+<a name="spotcli"></a>
+### Use / spotcli
 
 To display the help menu for **spotcli**, the included command line helper application:
 
