@@ -152,16 +152,11 @@ Either an Identity and Access Management user or role must be used to retrieve s
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Effect": "Allow",
-            "Action": "ec2:Describe*",
-            "Resource": "*"
-        },
-        {
+            "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "cloudwatch:ListMetrics",
-                "cloudwatch:GetMetricStatistics",
-                "cloudwatch:Describe*"
+                "ec2:DescribeSpotPriceHistory",
+                "ec2:DescribeRegions"
             ],
             "Resource": "*"
         }
@@ -169,7 +164,7 @@ Either an Identity and Access Management user or role must be used to retrieve s
 }
 ```
 
-Alternatively, the AWS Managed Policy 'AmazonEC2ReadOnlyAccess' can be used via the following ARN:
+Alternatively, if more permissive (but still read-only) permissions can be tolerated, the AWS Managed Policy 'AmazonEC2ReadOnlyAccess' can be used via the following ARN:
 
 * arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
 
