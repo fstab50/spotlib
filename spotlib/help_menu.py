@@ -19,7 +19,7 @@ rbrct = bbc + ' ] ' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
 
-menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
+menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' command help'
 
 synopsis_cmd = (
         ACCENT + 'spotcli' + rst + '  --start <value> ' + ' --end <value>' + rst +
