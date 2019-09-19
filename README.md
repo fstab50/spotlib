@@ -143,7 +143,7 @@ To display the help menu for **spotcli**, the included command line helper appli
 [back to the top](#top)
 
 * * *
-IAM Permissions
+## IAM Permissions
 
 Either an Identity and Access Management user or role must be used to retrieve spot price data from AWS. The following is the minimum permissions required to retrieve data:
 
