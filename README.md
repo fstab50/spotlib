@@ -194,8 +194,9 @@ All works contained herein copyrighted via below author unless work is explicitl
 $ spotcli --version
 ```
 
-[![help](./assets/version-copyright.png)](https://s3.us-east-2.amazonaws.com/http-imagestore/spotlib/version-copyright.png)
-
+<p align="center">
+    <a href="http://images.awspros.world/spotlib/version-copyright.png" target="_blank"><img src="./assets/version-copyright.png">
+</p>
 
 [back to the top](#top)
 
