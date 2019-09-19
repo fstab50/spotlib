@@ -142,32 +142,34 @@ class EC2SpotPrices():
                 fx = inspect.stack()[0][3]
                 logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
 
-    def get_regional_pricedata(self, region, dtstrings=False):
+    def get_regional_pricedata(self, regions, dtstrings=False):
         """
             Rollup facility for ease generation of regional spot price data.
             Iterates child paginator and generator methods to retrieve spot prices.
 
         Args:
-            :region (str): AWS region code
+            :region (list): list of AWS region codes (e.g. us-east-1)
             :dtstrings (bool): True returns datetime in str format, DEFAULT: False
 
         Returns:
             - Spot price data for specific AWS region code
               specified (e.q. region = us-east-1)
         """
-        return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}
+        container = []
+        for region in regions:
+            container.extend([x for x in self._spotprice_generator(region, dtstrings)])
+        return {'SpotPriceHistory': container}
 
     def get_allregion_pricedata(self, dtstrings=False):
         """
-            Rollup facility for ease generation of regional spot price data.
-            Iterates child paginator and generator methods to retrieve spot prices.
+            Rollup facility for ease generation of spot price data from all AWS
+            regions. Automates iternation of child paginator and generator methods
+            to retrieve spot prices.
 
         Args:
-            :region (str): AWS region code
             :dtstrings (bool): True returns datetime in str format, DEFAULT: False
 
         Returns:
-            - Spot price data for specific AWS region code
-              specified (e.q. region = us-east-1)
+            - Spot price data for all AWS region codes (e.q. us-east-1)
         """
         return {'SpotPriceHistory': [x for x in self._spotprice_generator(None, dtstrings)]}
