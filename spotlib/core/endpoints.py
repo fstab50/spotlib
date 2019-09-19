@@ -133,7 +133,7 @@ class DurationEndpoints():
         """
         try:
             if all(isinstance(x, datetime.datetime) for x in [start_time, end_time]):
-                return start, end
+                return start_time, end_time
 
             elif any(isinstance(x, str) for x in [start_time, end_time]) \
                 and (re_dt.match(x) for x in [start_time, end_time]):
