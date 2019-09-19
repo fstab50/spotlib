@@ -14,16 +14,16 @@ from spotlib.variables import c, bbc, rst
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
 bdcy = c.CYAN + c.BOLD          # bold blue
-lbrct = bbc + '[ ' + rst        # left bracket
-rbrct = bbc + ' ]' + rst        # right bracket
+lbrct = bbc + ' [ ' + rst        # left bracket
+rbrct = bbc + ' ] ' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
 tab = '\t'.expandtabs(24)
 
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' help contents'
 
 synopsis_cmd = (
-        ACCENT + PACKAGE + rst + ' --start <values> ' +
-        lbrct + '--end <values>' + rst
+        ACCENT + 'spotcli' + rst + '  --start <value> ' + ' --end <value>' + rst +
+        ' ' + lbrct + '--debug' + rbrct
     )
 
 url_doc = c.URL + 'http://spotlib.readthedocs.io' + rst
@@ -42,8 +42,8 @@ menu_body = menu_title + c.BOLD + """
         $ """ + synopsis_cmd + """
 
                         -s, --start  <value>
-                        -e, --end  <value>
-                       [-l, --list  <methods> | <regions>  ]
+                        -e, --end    <value>
+                       [-l, --list   <methods> | <regions>  ]
                        [-d, --debug    ]
                        [-h, --help     ]
                        [-V, --version  ]

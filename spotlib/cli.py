@@ -33,7 +33,8 @@ import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
-from spotlib.core import SpotPrices, UtcConversion
+from spotlib import SpotPrices, UtcConversion
+from spotlib.help_menu import menu_body
 from spotlib import about, logger
 
 
@@ -89,7 +90,7 @@ def default_endpoints(duration_days=1):
 
 def help_menu():
     """Print help menu options"""
-    pass
+    print(menu_body)
 
 
 def summary_statistics(data, instances):
