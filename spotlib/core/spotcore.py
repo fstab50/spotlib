@@ -113,7 +113,7 @@ class EC2SpotPrices():
         """
         return [self._page_iterators(region) for region in regions]
 
-    def _spotprice_generator(self, region, dt_string=False):
+    def _spotprice_generator(self, region=None, dt_string=False):
         """
         Generator returning up to 1000 data items per api request to AWS
 
@@ -142,7 +142,7 @@ class EC2SpotPrices():
                 fx = inspect.stack()[0][3]
                 logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
 
-    def generate_pricedata(self, region, dtstrings=False):
+    def get_regional_pricedata(self, region, dtstrings=False):
         """
             Rollup facility for ease generation of regional spot price data.
             Iterates child paginator and generator methods to retrieve spot prices.
@@ -156,3 +156,18 @@ class EC2SpotPrices():
               specified (e.q. region = us-east-1)
         """
         return {'SpotPriceHistory': [x for x in self._spotprice_generator(region, dtstrings)]}
+
+    def get_allregion_pricedata(self, dtstrings=False):
+        """
+            Rollup facility for ease generation of regional spot price data.
+            Iterates child paginator and generator methods to retrieve spot prices.
+
+        Args:
+            :region (str): AWS region code
+            :dtstrings (bool): True returns datetime in str format, DEFAULT: False
+
+        Returns:
+            - Spot price data for specific AWS region code
+              specified (e.q. region = us-east-1)
+        """
+        return {'SpotPriceHistory': [x for x in self._spotprice_generator(None, dtstrings)]}
