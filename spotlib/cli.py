@@ -203,6 +203,7 @@ def precheck(debug, region):
     """
     if region == 'noregion':
         return False
+    return True
 
     try:
 
@@ -269,7 +270,7 @@ def init():
 
     elif args.get:
         # set local region
-        args.region = local_awsregion() if args.region == 'noregion' else args.region
+        args.region = local_awsregion(args.profile) if args.region == 'noregion' else args.region
 
         # validate prerun conditions
         defaults = precheck(args.debug, args.region)
@@ -297,12 +298,14 @@ def init():
 
             # write to file on local filesystem
             key = os.path.join(region, fname)
-            _completed = export_iterobject(prices, key)
+            _completed = export_iterobject(prices, fname)
 
             # log status
             success = f'Successfully wrote {key} to local filesystem'
             failure = f'Problem writing {key} to local filesystem'
             logger.info(success) if _completed else logger.warning(failure)
+
+            return True
 
             # build unique collection of instances for this region
             regional_sizes = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
