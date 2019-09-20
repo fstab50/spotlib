@@ -32,13 +32,16 @@ import inspect
 from spotlib import logger
 
 
-# precompiled regex pattern, datetime
+# precompiled regex pattern; datetime
 re_dt = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
 
-# precompiled regex pattern, datetime, no "T" separator
+# precompiled regex pattern; No timezone information
+re_notz = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)')
+
+# precompiled regex pattern; datetime, no "T" separator
 re_dtnot = re.compile('\d{4}-[01]\d-[0-3]\d[\s][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
 
-# precompiled regex pattern, date
+# precompiled regex pattern; date
 re_date = re.compile('\d{4}-[01]\d-[0-3]\d')
 
 
@@ -90,7 +93,7 @@ class DurationEndpoints():
             self.start, self.end = self.default_endpoints(self.d_days)
 
         elif any(x is not None for x in [start_dt, end_dt]):
-            x, y = self.calculate_duration_endpoints(start_dt, end_dt)
+            x, y = self.custom_endpoints(start_dt, end_dt)
             self.start = x if x is not None else self.default_endpoints()[0]
             self.end = y if y is not None else self.default_endpoints()[1]
 
