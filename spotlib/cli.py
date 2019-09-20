@@ -29,6 +29,7 @@ import datetime
 import json
 import inspect
 import argparse
+import subprocess
 import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
@@ -93,6 +94,13 @@ def help_menu():
     """Print help menu options"""
     print(menu_body)
 
+
+def local_awsregion(profile):
+    """Determines AWS region code local to user"""
+    if os.environ.get('AWS_DEFAULT_REGION'):
+        return os.environ['AWS_DEFAULT_REGION']
+    cmd = 'aws configure get {}.region'.format(profile)
+    return subprocess.getoutput(cmd).strip()
 
 def summary_statistics(data, instances):
     """
@@ -169,12 +177,14 @@ def options(parser, help_menu=False):
     # default datetime objects when no custom datetimes supplied
     start_dt, end_dt = default_endpoints()
 
-    parser.add_argument("-p", "--pull", dest='pull', action='store_true', required=False)
+    parser.add_argument("-g", "--get", dest='get', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
-    parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
-    parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
     parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
+    parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-p", "--profile", dest='profile', nargs='*', default='default', required=False)
+    parser.add_argument("-r", "--region", dest='region', nargs='*', default='noregion', required=False)
+    parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -187,10 +197,13 @@ def package_version():
     sys.exit(exit_codes['EX_OK']['Code'])
 
 
-def precheck(debug):
+def precheck(debug, region):
     """
     Runtime Dependency Checks: postinstall artifacts, environment
     """
+    if region == 'noregion':
+        return False
+
     try:
 
         home_dir = os.expanduser('~')
@@ -254,9 +267,12 @@ def init():
     elif args.version:
         package_version()
 
-    elif args.pull:
+    elif args.get:
+        # set local region
+        args.region = local_awsregion() if args.region == 'noregion' else args.region
+
         # validate prerun conditions
-        defaults = precheck(args.debug)
+        defaults = precheck(args.debug, args.region)
 
         d = SpotPrices()
         start, end = d.set_endpoints(args.start, args.end)
@@ -264,7 +280,7 @@ def init():
         # global container for ec2 instance size types
         instance_sizes = []
 
-        for region in get_regions():
+        for region in args.region:
 
             fname = '_'.join(
                         [
@@ -282,6 +298,10 @@ def init():
             # write to file on local filesystem
             key = os.path.join(region, fname)
             _completed = export_iterobject(prices, key)
+
+            # log status
+            success = f'Successfully wrote {key} to local filesystem'
+            failure = f'Problem writing {key} to local filesystem'
             logger.info(success) if _completed else logger.warning(failure)
 
             # build unique collection of instances for this region
