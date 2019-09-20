@@ -177,7 +177,6 @@ def options(parser, help_menu=False):
     # default datetime objects when no custom datetimes supplied
     start_dt, end_dt = default_endpoints()
 
-    parser.add_argument("-g", "--get", dest='get', action='store_true', required=False)
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
@@ -268,7 +267,7 @@ def init():
     elif args.version:
         package_version()
 
-    elif args.get:
+    elif args.start and args.end:
         # set local region
         args.region = local_awsregion(args.profile) if args.region == 'noregion' else args.region
 
