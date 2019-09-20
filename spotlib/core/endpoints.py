@@ -146,7 +146,7 @@ class DurationEndpoints():
             fx = inspect.stack()[0][3]
             logger.exception(f'{fx}: Unknown exception while calc start & end duration: {e}')
             return self.start, self.end
-        return  start, end
+        return start, end
 
     def custom_duration(self, duration_days):
         """
@@ -155,7 +155,7 @@ class DurationEndpoints():
         return self.default_endpoints(duration_days)
 
     def _convert_dt_string(self, dt_str):
-        dt_format = '%Y-%m-%dT%H:%M:%S'
+        dt_format = '%Y-%m-%dT%H:%M:%SZ'
         return datetime.datetime.strptime(format_datetime(dt_str), dt_format)
 
     def __str__(self):
