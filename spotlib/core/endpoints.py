@@ -35,8 +35,8 @@ from spotlib import logger
 # precompiled regex pattern; datetime
 re_dt = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
 
-# precompiled regex pattern; No timezone information
-re_notz = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)')
+# precompiled regex pattern; No timezone information -- NOT VALID SYNTAX
+re_notz = re.compile('\d{4}-[01]\d-[0-3]\d[\sT][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)^Z')
 
 # precompiled regex pattern; datetime, no "T" separator
 re_dtnot = re.compile('\d{4}-[01]\d-[0-3]\d[\s][0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?')
