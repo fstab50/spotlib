@@ -34,7 +34,7 @@ menu_body = menu_title + c.BOLD + """
 
   DESCRIPTION""" + rst + """
 
-            A tool to retrieve Amazon EC2 Spot Instance Pricing
+            A tool to retrieve Amazon EC2  Spot Instance Pricing
             Source Code Repo: """ + url_sc + """
     """ + c.BOLD + """
   SYNOPSIS""" + rst + """
@@ -43,6 +43,7 @@ menu_body = menu_title + c.BOLD + """
 
                         -s, --start  <value>
                         -e, --end    <value>
+                        -r, --region <value>
                        [-l, --list   <methods> | <regions>  ]
                        [-d, --debug    ]
                        [-h, --help     ]
@@ -56,12 +57,15 @@ menu_body = menu_title + c.BOLD + """
         -e, --end""" + rst + """ <value>:  Datetime of end of the price sampling
             period (example: 2019-09-04T23:59:59)
     """ + c.BOLD + """
-        -l, --list""" + rst + """ <value>:  List available method calls or AWS
-            region codes
+        -l, --list""" + rst + """ <value>: List available method calls or Amazon
+            Web Services' region codes
     """ + c.BOLD + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + c.BOLD + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
     """ + c.BOLD + """
-        -V, --version""" + rst + """:  Print package version  and copyright info
+        -r, --region""" + rst + """:  AWS region code (e.g. us-east-1) for which
+            you wish to retrieve EC2 spot price data
+    """ + c.BOLD + """
+        -V, --version""" + rst + """: Print version, license, and copyright info
     """
