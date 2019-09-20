@@ -183,6 +183,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-p", "--profile", dest='profile', nargs='*', default='default', required=False)
     parser.add_argument("-r", "--region", dest='region', nargs='*', default='noregion', required=False)
+    parser.add_argument("-l", "--last-day", dest='lastday', action='store_true', default=False, required=False)
     parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
@@ -267,15 +268,19 @@ def init():
     elif args.version:
         package_version()
 
-    elif args.start and args.end:
+    elif (args.start and args.end) or args.lastday:
         # set local region
         args.region = local_awsregion(args.profile) if args.region == 'noregion' else args.region
 
         # validate prerun conditions
         defaults = precheck(args.debug, args.region)
 
-        d = SpotPrices()
-        start, end = d.set_endpoints(args.start, args.end)
+        sp = SpotPrices()
+
+        if args.lastday:
+            start, end = sp.start, sp.end
+        else:
+            start, end = sp.set_endpoints(args.start, args.end)
 
         # global container for ec2 instance size types
         instance_sizes = []
@@ -290,7 +295,7 @@ def init():
                         ]
                     )
 
-            prices = d.generate_pricedata(regions=[region])
+            prices = sp.generate_pricedata(regions=[region])
 
             # conversion of datetime obj => utc strings
             uc = UtcConversion(prices)
