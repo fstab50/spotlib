@@ -181,9 +181,9 @@ def options(parser, help_menu=False):
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
     parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
-    parser.add_argument("-p", "--profile", dest='profile', nargs='*', default='default', required=False)
+    parser.add_argument("-p", "--profile", dest='profile', nargs=1, default='default', required=False)
     parser.add_argument("-r", "--region", dest='region', nargs='*', default='noregion', required=False)
-    parser.add_argument("-l", "--last-day", dest='lastday', action='store_true', default=False, required=False)
+    parser.add_argument("-D", "--duration-days", dest='duration', nargs='*', default=None, required=False)
     parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
@@ -249,7 +249,9 @@ def s3upload(bucket, s3object, key, profile='default'):
 
 
 def init():
-
+    """
+    Initialize spot price operations; process command line parameters
+    """
     parser = argparse.ArgumentParser(add_help=False)
 
     try:
@@ -268,17 +270,17 @@ def init():
     elif args.version:
         package_version()
 
-    elif (args.start and args.end) or args.lastday:
+    elif (args.start and args.end) or args.duration:
         # set local region
         args.region = local_awsregion(args.profile) if args.region == 'noregion' else args.region
 
         # validate prerun conditions
         defaults = precheck(args.debug, args.region)
 
-        sp = SpotPrices()
+        sp = SpotPrices(profile=args.profile)
 
-        if args.lastday:
-            start, end = sp.start, sp.end
+        if args.duration and isinstance(int(args.duration[0]), int):
+            start, end = sp.set_endpoints(duration=int(args.duration[0]))
         else:
             start, end = sp.set_endpoints(args.start, args.end)
 

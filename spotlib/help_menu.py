@@ -22,8 +22,8 @@ tab = '\t'.expandtabs(24)
 menu_title = '\n' + c.BOLD + tab + PACKAGE + rst + ' command help'
 
 synopsis_cmd = (
-        ACCENT + 'spotcli' + rst + '  --start <value> ' + ' --end <value>' + rst +
-        ' ' + lbrct + '--debug' + rbrct
+        ACCENT + 'spotcli' + rst + ' --start <value> ' + '--end <value>' + vdiv +
+        '--duration-days'
     )
 
 url_doc = c.URL + 'http://spotlib.readthedocs.io' + rst
@@ -41,9 +41,9 @@ menu_body = menu_title + c.BOLD + """
 
         $ """ + synopsis_cmd + """
 
-                        -s, --start  <value>
-                        -e, --end    <value>
                         -r, --region <value>
+                       [-s, --start  <value>  ]
+                       [-e, --end    <value>  ]
                        [-l, --list   <methods> | <regions>  ]
                        [-d, --debug    ]
                        [-h, --help     ]
@@ -51,8 +51,8 @@ menu_body = menu_title + c.BOLD + """
     """ + c.BOLD + """
   OPTIONS
     """ + c.BOLD + """
-        -s, --start""" + rst + """ <value>:  Datetime of start of price sampling
-            period (example: 2019-09-03T00:00:00)
+        -D, --duration-days""" + rst + """ <value>: Number of days of price data
+            history to retrieve ending at midnight on present day
     """ + c.BOLD + """
         -e, --end""" + rst + """ <value>:  Datetime of end of the price sampling
             period (example: 2019-09-04T23:59:59)
@@ -65,6 +65,9 @@ menu_body = menu_title + c.BOLD + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
     """ + c.BOLD + """
         -r, --region""" + rst + """:  AWS region code (e.g. us-east-1) for which
+    """ + c.BOLD + """
+        -s, --start""" + rst + """ <value>:  Datetime of start of price sampling
+            period (example: 2019-09-03T00:00:00)
             you wish to retrieve EC2 spot price data
     """ + c.BOLD + """
         -V, --version""" + rst + """: Print version, license, and copyright info
