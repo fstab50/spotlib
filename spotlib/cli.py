@@ -302,12 +302,13 @@ def init():
 
             # write to file on local filesystem
             key = os.path.join(region, fname)
-            _completed = export_iterobject(prices, fname)
+            os.makedirs(region) if not os.path.exists(region) else True
+            _completed = export_iterobject(prices, key)
 
             # log status
             success = f'Successfully wrote {key} to local filesystem'
             failure = f'Problem writing {key} to local filesystem'
-            logger.info(success) if _completed else logger.warning(failure)
+            stdout_message(success) if _completed else stdout_message(failure, prefix='WARN')
 
             return True
 
