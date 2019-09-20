@@ -33,6 +33,7 @@ import boto3
 from botocore.exceptions import ClientError
 from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
+from libtools.js import export_iterobject
 from spotlib import SpotPrices, UtcConversion
 from spotlib.help_menu import menu_body
 from spotlib import about, logger
@@ -265,48 +266,33 @@ def init():
 
         for region in get_regions():
 
-            s3_fname = '_'.join(
-                            [
-                                start.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                                end.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                                'all-instance-spot-prices.json'
-                            ]
-                        )
+            fname = '_'.join(
+                        [
+                            start.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            end.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'all-instance-spot-prices.json'
+                        ]
+                    )
 
-            prices = [x for x in d.generate_pricedata([region])['SpotPriceHistory']]
+            prices = d.generate_pricedata(regions=[region])
 
             # conversion of datetime obj => utc strings
             uc = UtcConversion(prices)
+
+            # write to file on local filesystem
+            key = os.path.join(region, fname)
+            _completed = export_iterobject(prices, key)
+            logger.info(success) if _completed else logger.warning(failure)
 
             # build unique collection of instances for this region
             regional_sizes = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
             instance_sizes.extend(regional_sizes)
 
-            # spot price data destination
-            bucket = read_env_variable('S3_BUCKET', None)
-            data = prices
-            key = os.path.join(region, s3_fname)
-
-            _completed = s3upload(bucket, data, key)
-            success = f'Successful write to s3 bucket {bucket} of object {key}'
-            failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
-            logger.info(success) if _completed else logger.warning(failure)
-
         # instance sizes across analyzed regions
         instance_sizes = list(set(instance_sizes))
         instance_sizes.sort()
-
-        # instance types list destination
-        bucket = 'aws01-storage'
-        s3object = instance_sizes
-        key = os.path.join(region, 'spot-instanceTypes')
-
-        if s3upload(bucket, s3object, key):
-            return summary_statistics(instance_sizes, prices, region)
-
-        failure = f'Problem writing data to s3 bucket {bucket} of object {key}'
-        logger.warning(failure)
-        return False
+        key = 'instanceTypes'
+        return export_iterobject({key: instance_sizes}, 'spot-instanceTypes.json')
 
     else:
         stdout_message(
