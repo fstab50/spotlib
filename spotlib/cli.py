@@ -273,7 +273,7 @@ def init():
                             ]
                         )
 
-            prices = [x for x in d.generate_pricedata(region)['SpotPriceHistory']]
+            prices = [x for x in d.generate_pricedata([region])['SpotPriceHistory']]
 
             # conversion of datetime obj => utc strings
             uc = UtcConversion(prices)

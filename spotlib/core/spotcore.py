@@ -142,7 +142,7 @@ class EC2SpotPrices():
                 fx = inspect.stack()[0][3]
                 logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
 
-    def get_regional_pricedata(self, regions, dtstrings=False):
+    def generate_pricedata(self, regions, dtstrings=False):
         """
             Rollup facility for ease generation of regional spot price data.
             Iterates child paginator and generator methods to retrieve spot prices.
@@ -160,7 +160,7 @@ class EC2SpotPrices():
             container.extend([x for x in self._spotprice_generator(region, dtstrings)])
         return {'SpotPriceHistory': container}
 
-    def get_allregion_pricedata(self, dtstrings=False):
+    def generate_allregion_pricedata(self, dtstrings=False):
         """
             Rollup facility for ease generation of spot price data from all AWS
             regions. Automates iternation of child paginator and generator methods
