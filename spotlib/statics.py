@@ -42,6 +42,7 @@ else:
 
     # project
     PACKAGE = 'spotlib'
+    PACKAGE_CLI = 'spotcli'
     LICENSE = 'GPL v3'
     LICENSE_DESC = 'General Public License v3'
     version = __version__
@@ -66,6 +67,7 @@ else:
     seed_config = {
         "PROJECT": {
             "PACKAGE": PACKAGE,
+            "PACKAGE_CLI": PACKAGE_CLI,
             "PACKAGE_VERSION": version
         },
         "CONFIG": {
