@@ -5,7 +5,7 @@
 PACKAGE: spotlib
 
 ``spotlib``: reusable library for retrieval, conversion, and storage 
-              of Amazon EC2 spot price history data (json format).
+             of Amazon EC2 spot price history data (json format).
 
 Includes:
 * class for setting historical window for data
