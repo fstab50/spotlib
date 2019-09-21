@@ -11,7 +11,7 @@ Internally, **spotlib** utilises a paged generator architecture to achieve maxim
 
 Although **spotlib** was designed for maximum flexibility as a library, **spotlib** also includes a cli helper application, [spotcli](#spotcli), a cli binary which can be used directly for retrieving spot price data simple use cases.
 
-**Version**: 0.1.4
+**Version**: 0.1.5
 
 * * *
 
