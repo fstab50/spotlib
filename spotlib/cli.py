@@ -352,7 +352,8 @@ def init():
         instance_sizes = list(set(instance_sizes))
         instance_sizes.sort()
         key = 'instanceTypes'
-        return writeout_data(key, instance_sizes, 'spot-instanceTypes.json')
+        date = sp.end.strftime("%Y-%m-%d")
+        return writeout_data(key, instance_sizes, date + '_spot-instanceTypes.json')
 
     else:
         stdout_message(
