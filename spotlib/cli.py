@@ -257,6 +257,27 @@ def s3upload(bucket, s3object, key, profile='default'):
     return True if str(statuscode).startswith('20') else False
 
 
+def writeout_data(key, jsonobject, filename):
+    """
+        Persists json data to local filesystem
+
+    Returns:
+        Success | Failure, TYPE: bool
+
+    """
+    tab = '\t'.expandtabs(13)
+
+    if export_iterobject({key: jsonobject}, filename):
+        success = f'Wrote {bcy + filename + rst}\n{tab}successfully to local filesystem'
+        stdout_message(success, prefix='OK')
+        return True
+    else:
+        failure = f'Problem writing {bcy + filename + rst} to local filesystem'
+        stdout_message(failure, prefix='WARN')
+        return False
+
+
+
 def init():
     """
     Initialize spot price operations; process command line parameters
@@ -323,8 +344,6 @@ def init():
             failure = f'Problem writing {fkey} to local filesystem'
             stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
 
-            return True
-
             # build unique collection of instances for this region
             regional_sizes = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
             instance_sizes.extend(regional_sizes)
@@ -333,7 +352,7 @@ def init():
         instance_sizes = list(set(instance_sizes))
         instance_sizes.sort()
         key = 'instanceTypes'
-        return export_iterobject({key: instance_sizes}, 'spot-instanceTypes.json')
+        return writeout_data(key, instance_sizes, 'spot-instanceTypes.json')
 
     else:
         stdout_message(
