@@ -32,12 +32,12 @@ import argparse
 import subprocess
 import boto3
 from botocore.exceptions import ClientError
-from spotlib.lambda_utils import get_regions, read_env_variable
 from libtools import stdout_message
 from libtools.js import export_iterobject
 from spotlib import SpotPrices, UtcConversion
 from spotlib.help_menu import menu_body
 from spotlib import about, logger
+from spotlib.variables import acct, bdwt, bbc, bbl, bcy, btext, rst
 
 
 try:
@@ -90,6 +90,14 @@ def default_endpoints(duration_days=1):
     return start, end
 
 
+def format_pricefile(key):
+    """Adds path delimiter and color formatting to output artifacts"""
+    region = bcy + key.split('/')[0] + rst
+    pricefile = bcy + key.split('/')[1] + rst
+    delimiter = bdwt + '/' + rst
+    return region + delimiter + pricefile
+
+
 def help_menu():
     """Print help menu options"""
     print(menu_body)
@@ -101,6 +109,7 @@ def local_awsregion(profile):
         return os.environ['AWS_DEFAULT_REGION']
     cmd = 'aws configure get {}.region'.format(profile)
     return subprocess.getoutput(cmd).strip()
+
 
 def summary_statistics(data, instances):
     """
@@ -308,9 +317,11 @@ def init():
             _completed = export_iterobject(prices, key)
 
             # log status
-            success = f'Successfully wrote {key} to local filesystem'
-            failure = f'Problem writing {key} to local filesystem'
-            stdout_message(success) if _completed else stdout_message(failure, prefix='WARN')
+            tab = '\t'.expandtabs(13)
+            fkey = format_pricefile(key)
+            success = f'Wrote {fkey}\n{tab}successfully to local filesystem'
+            failure = f'Problem writing {fkey} to local filesystem'
+            stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
 
             return True
 
