@@ -90,14 +90,6 @@ def default_endpoints(duration_days=1):
     return start, end
 
 
-def format_pricefile(key):
-    """Adds path delimiter and color formatting to output artifacts"""
-    region = bcy + key.split('/')[0] + rst
-    pricefile = bcy + key.split('/')[1] + rst
-    delimiter = bdwt + '/' + rst
-    return region + delimiter + pricefile
-
-
 def help_menu():
     """Print help menu options"""
     print(menu_body)
@@ -109,53 +101,6 @@ def local_awsregion(profile):
         return os.environ['AWS_DEFAULT_REGION']
     cmd = 'aws configure get {}.region'.format(profile)
     return subprocess.getoutput(cmd).strip()
-
-
-def summary_statistics(data, instances):
-    """
-    Calculate stats across spot price data elements retrieved
-    in the current execution.  Prints to stdout
-
-    Args:
-        :data (list): list of spot price dictionaries
-        :instances (list): list of unique instance types found in data
-
-    Returns:
-        Success | Failure, TYPE:  bool
-    """
-    instance_dict, container = {}, []
-
-    for itype in instances:
-        try:
-            cur_type = [
-                x['SpotPrice'] for x in data['SpotPriceHistory'] if x['InstanceType'] == itype
-            ]
-        except KeyError as e:
-            logger.exception('KeyError on key {} while printing summary report statistics.'.format(e))
-            continue
-
-        instance_dict['InstanceType'] = str(itype)
-        instance_dict['AvgPrice'] = sum([float(x['SpotPrice']) for x in cur_type]) / len(cur_type)
-        container.append(instance_dict)
-    # output to stdout
-    print_ending_summary(instances, container)
-    return True
-
-
-def print_ending_summary(itypes_list, summary_data):
-    """
-    Prints summary statics to stdout at the conclusion of spot
-    price data retrieval
-    """
-    now = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
-    tab = '\t'.expandtabs(4)
-    print('EC2 Spot price data retrieval concluded {}'.format(now))
-    print('Found {} unique EC2 size types in spot data'.format(len(itypes_list)))
-    print('Instance Type distribution:')
-    for itype in itypes_list:
-        for instance in container:
-            if instance['InstanceType'] == itype:
-                print('{} - {}'.format(tab, itype, instance['AvgPrice']))
 
 
 def source_environment(env_variable):
@@ -234,29 +179,6 @@ def precheck(debug, region):
     return defaults
 
 
-def s3upload(bucket, s3object, key, profile='default'):
-    """
-        Streams object to S3 for long-term storage
-
-    Returns:
-        Success | Failure, TYPE: bool
-    """
-    try:
-        session = boto3.Session(profile_name=profile)
-        s3client = session.client('s3')
-        # dict --> str -->  bytes (utf-8 encoded)
-        bcontainer = json.dumps(s3object, indent=4, default=str).encode('utf-8')
-        response = s3client.put_object(Bucket=bucket, Body=bcontainer, Key=key)
-
-        # http completion code
-        statuscode = response['ResponseMetadata']['HTTPStatusCode']
-
-    except ClientError as e:
-        logger.exception(f'Unknown exception while calc start & end duration: {e}')
-        return False
-    return True if str(statuscode).startswith('20') else False
-
-
 def writeout_data(key, jsonobject, filename):
     """
         Persists json data to local filesystem
@@ -275,7 +197,6 @@ def writeout_data(key, jsonobject, filename):
         failure = f'Problem writing {bcy + filename + rst} to local filesystem'
         stdout_message(failure, prefix='WARN')
         return False
-
 
 
 def init():
@@ -339,7 +260,6 @@ def init():
 
             # log status
             tab = '\t'.expandtabs(13)
-            fkey = format_pricefile(key)
             success = f'Wrote {fkey}\n{tab}successfully to local filesystem'
             failure = f'Problem writing {fkey} to local filesystem'
             stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
