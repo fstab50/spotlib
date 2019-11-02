@@ -148,7 +148,7 @@ class EC2SpotPrices():
             Iterates child paginator and generator methods to retrieve spot prices.
 
         Args:
-            :region (list): list of AWS region codes (e.g. us-east-1)
+            :regions (list): list of AWS region codes (e.g. us-east-1)
             :dtstrings (bool): True returns datetime in str format, DEFAULT: False
 
         Returns:
