@@ -142,6 +142,22 @@ To display the help menu for **spotcli**, the included command line helper appli
 
 [back to the top](#top)
 
+--
+
+To run a test of the spotlib library, retrieve spot price data and writeout to disk:
+
+```bash
+$ spotcli --duration-days 3 --region eu-west-1
+```
+
+<p align="center">
+    <a href="http://images.awspros.world/spotlib/spotcli.png" target="_blank"><img src="./assets/spotcli.png">
+</p>
+
+--
+
+[back to the top](#top)
+
 * * *
 ## IAM Permissions
 
