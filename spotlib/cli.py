@@ -199,6 +199,16 @@ def writeout_data(key, jsonobject, filename):
         return False
 
 
+def writeout_status(key, region, filename, finished):
+    """Display current status message to user"""
+    fregion = fs + region + '/' + rst       # formatted region
+    ffname = bbl + filename + rst              # formtted filename
+    tab = '\t'.expandtabs(13)
+    success = f'Wrote {fregion + ffname}\n{tab}successfully to local filesystem'
+    failure = f'Problem writing {key} to local filesystem'
+    stdout_message(success, prefix='OK') if finished else stdout_message(failure, prefix='WARN')
+
+
 def init():
     """
     Initialize spot price operations; process command line parameters
@@ -259,12 +269,7 @@ def init():
             _completed = export_iterobject(prices, key)
 
             # user status message
-            fregion = fs + region + '/' + rst       # formatted region
-            ffname = bbl + fname + rst              # formtted filename
-            tab = '\t'.expandtabs(13)
-            success = f'Wrote {fregion + ffname}\n{tab}successfully to local filesystem'
-            failure = f'Problem writing {key} to local filesystem'
-            stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
+            writeout_status(key, region, fname, _completed)
 
             # build unique collection of instances for this region
             regional_sizes = list(set([x['InstanceType'] for x in prices['SpotPriceHistory']]))
