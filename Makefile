@@ -93,8 +93,8 @@ build: artifacts  ## Build dist, increment version || force version (VERSION=X.Y
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
 	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py --set-version $(VERSION) --update; \
 	else . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py --update; fi && . $(VENV_DIR)/bin/activate && \
-	cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
+	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py --update; fi; \
+	. $(VENV_DIR)/bin/activate && cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
 .PHONY: testpypi
