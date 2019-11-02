@@ -37,7 +37,7 @@ from libtools.js import export_iterobject
 from spotlib import SpotPrices, UtcConversion
 from spotlib.help_menu import menu_body
 from spotlib import about, logger
-from spotlib.variables import acct, bdwt, bbc, bbl, bcy, btext, rst
+from spotlib.variables import acct, bdwt, bbc, bl, bbl, btext, fs, rst
 
 
 try:
@@ -190,11 +190,11 @@ def writeout_data(key, jsonobject, filename):
     tab = '\t'.expandtabs(13)
 
     if export_iterobject({key: jsonobject}, filename):
-        success = f'Wrote {bcy + filename + rst}\n{tab}successfully to local filesystem'
+        success = f'Wrote {bbl + filename + rst}\n{tab}successfully to local filesystem'
         stdout_message(success, prefix='OK')
         return True
     else:
-        failure = f'Problem writing {bcy + filename + rst} to local filesystem'
+        failure = f'Problem writing {bbl + filename + rst} to local filesystem'
         stdout_message(failure, prefix='WARN')
         return False
 
@@ -223,7 +223,7 @@ def init():
 
     elif (args.start and args.end) or args.duration:
         # set local region
-        args.region = local_awsregion(args.profile) if not args.region else args.region
+        args.region = [local_awsregion(args.profile)] if not args.region else args.region
 
         # validate prerun conditions
         defaults = precheck(args.debug, args.region)
@@ -258,9 +258,11 @@ def init():
             os.makedirs(region) if not os.path.exists(region) else True
             _completed = export_iterobject(prices, key)
 
-            # log status
+            # user status message
+            fregion = fs + region + '/' + rst       # formatted region
+            ffname = bbl + fname + rst              # formtted filename
             tab = '\t'.expandtabs(13)
-            success = f'Wrote {key}\n{tab}successfully to local filesystem'
+            success = f'Wrote {fregion + ffname}\n{tab}successfully to local filesystem'
             failure = f'Problem writing {key} to local filesystem'
             stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
 

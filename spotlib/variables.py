@@ -33,22 +33,24 @@ except Exception:
 
 
 # universal colors
-rd = c.RED + c.BOLD
-yl = c.YELLOW + c.BOLD
-fs = c.GOLD3
 bd = c.BOLD
-gn = c.BRIGHT_GREEN
-title = c.BRIGHT_WHITE + c.BOLD
 bcy = c.BRIGHT_CYAN
-bdcy = c.CYAN + c.BOLD          # bold blue
 bbc = bd + c.BRIGHT_CYAN
-bbl = bd + c.BRIGHT_BLUE
-highlight = bd + c.BRIGHT_BLUE
-frame = gn + bd
+bdcy = c.CYAN + c.BOLD          # bold blue
+bl = c.BLUE
+bbl = c.BRIGHT_BLUE
+bbbl = bd + c.BRIGHT_BLUE
 btext = text + c.BOLD
 bwt = c.BRIGHT_WHITE
 bdwt = c.BOLD + c.BRIGHT_WHITE
+gn = c.BRIGHT_GREEN
+frame = gn + bd
+fs = c.GOLD3
+highlight = bd + c.BRIGHT_BLUE
+rd = c.RED + c.BOLD
+title = c.BRIGHT_WHITE + c.BOLD
 ub = c.UNBOLD
+yl = c.YELLOW + c.BOLD
 rst = c.RESET
 
 # globals
