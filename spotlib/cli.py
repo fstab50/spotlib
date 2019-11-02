@@ -37,7 +37,7 @@ from libtools.js import export_iterobject
 from spotlib import SpotPrices, UtcConversion
 from spotlib.help_menu import menu_body
 from spotlib import about, logger
-from spotlib.variables import acct, bdwt, bbc, bl, bbl, btext, fs, rst
+from spotlib.variables import acct, bd, bdwt, bbc, bl, bbl, btext, fs, rst
 
 
 try:
@@ -190,13 +190,17 @@ def writeout_data(key, jsonobject, filename):
     tab = '\t'.expandtabs(13)
 
     if export_iterobject({key: jsonobject}, filename):
-        success = f'Wrote {bbl + filename + rst}\n{tab}successfully to local filesystem'
-        stdout_message(success, prefix='OK')
+        success = f'Wrote {bbl + filename + rst}\n{tab}successfully to local filesystem.'
+        if isinstance(jsonobject, list):
+            qty = bd + str(len(jsonobject)) + rst
+            ancillary_msg = f'\n{tab}{qty} unique instance types utilised for spot in region.'
+        stdout_message(success + ancillary_msg, prefix='OK')
         return True
     else:
-        failure = f'Problem writing {bbl + filename + rst} to local filesystem'
+        failure = f'Problem writing {bbl + filename + rst} to local filesystem.'
         stdout_message(failure, prefix='WARN')
         return False
+
 
 
 def writeout_status(key, region, filename, finished):
@@ -205,7 +209,7 @@ def writeout_status(key, region, filename, finished):
     ffname = bbl + filename + rst              # formtted filename
     tab = '\t'.expandtabs(13)
     success = f'Wrote {fregion + ffname}\n{tab}successfully to local filesystem'
-    failure = f'Problem writing {key} to local filesystem'
+    failure = f'Problem writing {key} to local filesystem.'
     stdout_message(success, prefix='OK') if finished else stdout_message(failure, prefix='WARN')
 
 
