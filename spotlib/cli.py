@@ -136,7 +136,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-p", "--profile", dest='profile', nargs=1, default='default', required=False)
-    parser.add_argument("-r", "--region", dest='region', nargs='*', default='noregion', required=False)
+    parser.add_argument("-r", "--region", dest='region', nargs='*', default=[], required=False)
     parser.add_argument("-D", "--duration-days", dest='duration', nargs='*', default=None, required=False)
     parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
@@ -223,7 +223,7 @@ def init():
 
     elif (args.start and args.end) or args.duration:
         # set local region
-        args.region = local_awsregion(args.profile) if args.region == 'noregion' else args.region
+        args.region = local_awsregion(args.profile) if not args.region else args.region
 
         # validate prerun conditions
         defaults = precheck(args.debug, args.region)
@@ -260,8 +260,8 @@ def init():
 
             # log status
             tab = '\t'.expandtabs(13)
-            success = f'Wrote {fkey}\n{tab}successfully to local filesystem'
-            failure = f'Problem writing {fkey} to local filesystem'
+            success = f'Wrote {key}\n{tab}successfully to local filesystem'
+            failure = f'Problem writing {key} to local filesystem'
             stdout_message(success, prefix='OK') if _completed else stdout_message(failure, prefix='WARN')
 
             # build unique collection of instances for this region
