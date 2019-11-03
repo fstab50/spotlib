@@ -129,7 +129,7 @@ $  sudo -H pip3 install spotlib
 
 * * *
 <a name="spotcli-help"></a>
-### Use / Spotcli Options
+### Use / Spotcli Help Application / Options
 
 To display the help menu for **spotcli**, the included command line helper application:
 
@@ -147,7 +147,7 @@ To display the help menu for **spotcli**, the included command line helper appli
 
 * * *
 <a name="spotcli-1region"></a>
-### Use / Spotcli Data Retrieval (1 region)
+### Use / Spotcli Help Application / Data Retrieval (1 region)
 
 To run a test of the spotlib library, retrieve spot price data and writeout to disk:
 
@@ -165,7 +165,7 @@ $ spotcli --duration-days 3 --region eu-west-1
 
 * * *
 <a name="spotcli-multiregion"></a>
-### Use / Spotcli Data Retrieval (multi-region)
+### Use / Spotcli Help Application / Data Retrieval (multi-region)
 
 To run a test of the spotlib library, retrieve spot price data and writeout to disk:
 
