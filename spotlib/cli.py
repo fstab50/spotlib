@@ -202,7 +202,6 @@ def writeout_data(key, jsonobject, filename):
         return False
 
 
-
 def writeout_status(key, region, filename, finished):
     """Display current status message to user"""
     fregion = fs + region + '/' + rst       # formatted region

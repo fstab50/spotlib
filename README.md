@@ -23,7 +23,9 @@ Although **spotlib** was designed for maximum flexibility as a library, **spotli
 
 * [**Use**](#use)
     * [**Library**](#use)
-    * [**spotcli**](#spotcli)
+    * [**spotcli** Options](#spotcli-help)
+    * [**spotcli** Data Retrieval -- 1 AWS Region](#spotcli-1region)
+    * [**spotcli** Data Retrieval -- Multiple AWS Regions](#spotcli-multiregion)
 
 * [**IAM Permissions**](#iam-permissions)
 
@@ -125,8 +127,8 @@ $  sudo -H pip3 install spotlib
 [back to the top](#top)
 
 * * *
-<a name="spotcli"></a>
-### Use / spotcli
+<a name="spotcli-help"></a>
+### Use / spotcli help
 
 To display the help menu for **spotcli**, the included command line helper application:
 
@@ -142,7 +144,9 @@ To display the help menu for **spotcli**, the included command line helper appli
 
 [back to the top](#top)
 
---
+* * *
+<a name="spotcli-1region"></a>
+### Use / spotcli data retrieval (1 region)
 
 To run a test of the spotlib library, retrieve spot price data and writeout to disk:
 
@@ -151,7 +155,25 @@ $ spotcli --duration-days 3 --region eu-west-1
 ```
 
 <p align="center">
-    <a href="http://images.awspros.world/spotlib/spotcli.png" target="_blank"><img src="./assets/spotcli.png">
+    <a href="http://images.awspros.world/spotlib/spotcli-1region.png" target="_blank"><img src="./assets/spotcli-1region.png">
+</p>
+
+--
+
+[back to the top](#top)
+
+* * *
+<a name="spotcli-multiregion"></a>
+### Use / spotcli data retrieval (multi-region)
+
+To run a test of the spotlib library, retrieve spot price data and writeout to disk:
+
+```bash
+$ spotcli --duration-days 1 --region eu-west-1 eu-west-2 us-east-1
+```
+
+<p align="center">
+    <a href="http://images.awspros.world/spotlib/spotcli-multiregion.png" target="_blank"><img src="./assets/spotcli-multiregion.png">
 </p>
 
 --
