@@ -24,9 +24,9 @@ Although **spotlib** was designed for maximum flexibility as a library, **spotli
 * [**Use**](#use)
     * [**Spotlib Library**](#use)
     * [**Spotcli Helper Application**](#spotcli-help)
-        * [spotcli Options](#spotcli-help)
-        * [spotcli Data Retrieval -- 1 AWS Region](#spotcli-1region)
-        * [spotcli Data Retrieval -- Multiple AWS Regions](#spotcli-multiregion)
+        * [Options](#spotcli-help)
+        * [Data Retrieval -- 1 AWS Region](#spotcli-1region)
+        * [Data Retrieval -- Multiple AWS Regions](#spotcli-multiregion)
 
 * [**IAM Permissions**](#iam-permissions)
 
@@ -77,7 +77,7 @@ $  sudo -H pip3 install spotlib
 * * *
 ## Use
 * * *
-### Use / Library
+### Use / Spotlib Library
 
 **spotlib** can be used most flexibly as an importable library:
 
@@ -129,7 +129,7 @@ $  sudo -H pip3 install spotlib
 
 * * *
 <a name="spotcli-help"></a>
-### Use / spotcli help
+### Use / Spotcli Options
 
 To display the help menu for **spotcli**, the included command line helper application:
 
@@ -147,7 +147,7 @@ To display the help menu for **spotcli**, the included command line helper appli
 
 * * *
 <a name="spotcli-1region"></a>
-### Use / spotcli data retrieval (1 region)
+### Use / Spotcli Data Retrieval (1 region)
 
 To run a test of the spotlib library, retrieve spot price data and writeout to disk:
 
@@ -165,7 +165,7 @@ $ spotcli --duration-days 3 --region eu-west-1
 
 * * *
 <a name="spotcli-multiregion"></a>
-### Use / spotcli data retrieval (multi-region)
+### Use / Spotcli Data Retrieval (multi-region)
 
 To run a test of the spotlib library, retrieve spot price data and writeout to disk:
 
