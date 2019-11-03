@@ -23,10 +23,10 @@ Although **spotlib** was designed for maximum flexibility as a library, **spotli
 
 * [**Use**](#use)
     * [**Spotlib Library**](#use)
-    * [**Helper Application** -- spotcli]
-        * [**spotcli** Options](#spotcli-help)
-        * [**spotcli** Data Retrieval -- 1 AWS Region](#spotcli-1region)
-        * [**spotcli** Data Retrieval -- Multiple AWS Regions](#spotcli-multiregion)
+    * [**Spotcli Helper Application**](#spotcli-help)
+        * [spotcli Options](#spotcli-help)
+        * [spotcli Data Retrieval -- 1 AWS Region](#spotcli-1region)
+        * [spotcli Data Retrieval -- Multiple AWS Regions](#spotcli-multiregion)
 
 * [**IAM Permissions**](#iam-permissions)
 
