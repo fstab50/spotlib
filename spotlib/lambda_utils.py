@@ -145,11 +145,14 @@ def get_regions():
         response = client.describe_regions()
 
     except ClientError as e:
-        logger.critical(
-            "%s: problem retrieving aws regions (Code: %s Message: %s)" %
-            (inspect.stack()[0][3], e.response['Error']['Code'],
-            e.response['Error']['Message']))
-        raise e
+        if e.response['Error']['Code'] == 'AuthFailure':
+            return ['us-east-1']
+        else:
+            logger.critical(
+                "%s: problem retrieving aws regions (Code: %s Message: %s)" %
+                (inspect.stack()[0][3], e.response['Error']['Code'],
+                e.response['Error']['Message']))
+            raise e
     return [region['RegionName'] for region in response['Regions']]
 
 
