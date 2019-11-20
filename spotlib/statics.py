@@ -16,7 +16,7 @@ Module Attributes:
 import os
 import inspect
 import logging
-from libtools.common import read_local_config, get_os
+from libtools import read_local_config, get_os, os_parityPath
 from spotlib._version import __version__
 
 logger = logging.getLogger(__version__)
@@ -36,6 +36,7 @@ except KeyError as e:
         '%s: %s variable is required and not found in the environment' %
         (inspect.stack()[0][3], str(e)))
     raise e
+
 else:
     # local vars -- this section executes as default; if windows, execute diff
     # section with appropriate pathnames
@@ -54,15 +55,15 @@ else:
     config_dir = '.config'
     config_subdir = PACKAGE
     config_filename = 'spotlib.conf'
-    config_dirpath = os.path.join(config_dir, config_subdir)
-    config_path = os.path.join(config_dirpath, config_filename)
+    config_dirpath = os_parityPath(os.path.join(config_dir, config_subdir))
+    config_path = os_parityPath(os.path.join(config_dirpath, config_filename))
 
     # logging parameters
     enable_logging = False
     log_mode = 'STREAM'
     log_filename = 'spotlib.log'
-    log_dir = os.path.join(origin, 'logs')
-    log_path = os.path.join(log_dir, log_filename)
+    log_dir = os_parityPath(os.path.join(origin, 'logs'))
+    log_path = os_parityPath(os.path.join(log_dir, log_filename))
 
     seed_config = {
         "PROJECT": {
