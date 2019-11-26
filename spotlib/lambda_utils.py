@@ -155,6 +155,9 @@ def get_regions(profile='default'):
                 (inspect.stack()[0][3], e.response['Error']['Code'],
                 e.response['Error']['Message']))
             raise e
+
+    except NoCredentialsError:
+            return ['us-east-1']
     return [region['RegionName'] for region in response['Regions']]
 
 
