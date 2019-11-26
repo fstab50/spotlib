@@ -43,9 +43,9 @@ def session_selector(profile):
         instantiated session, TYPE:  boto3 object
 
     """
-    access_key = os.environ.get('ACCESS_KEY')
-    secret_key = os.environ.get('SECRET_KEY')
-    token = os.environ.get('SESSION_TOKEN')
+    access_key = os.environ.get('AWS_ACCESS_KEY_ID')
+    secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    token = os.environ.get('AWS_SESSION_TOKEN')
 
     try:
         if access_key and secret_key:
