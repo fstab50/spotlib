@@ -27,7 +27,8 @@ import time
 import inspect
 import logging
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, NoCredentialsError
+from spotlib.core import session_selector
 from spotlib._version import __version__
 
 logger = logging.getLogger(__version__)
@@ -130,7 +131,7 @@ def get_account_info(account_profile=None):
     return (number, name)
 
 
-def get_regions():
+def get_regions(profile='default'):
     """
     Summary
         Returns list of region codes for all AWS regions worldwide
@@ -141,7 +142,8 @@ def get_regions():
     """
     try:
 
-        client = boto3.client('ec2')
+        session = session_selector(profile)
+        client = session.client('ec2')
         response = client.describe_regions()
 
     except ClientError as e:

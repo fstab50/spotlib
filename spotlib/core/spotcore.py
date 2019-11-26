@@ -66,9 +66,8 @@ class EC2SpotPrices():
             :debug (bool): debug output toggle
         """
         self.profile = profile
-        self.session = session_selector(profile)
-        #self.session = boto3.Session(profile_name=self.profile)
-        self.regions = get_regions()
+        self.session = session_selector(self.profile)
+        self.regions = get_regions(self.profile)
         self.start, self.end = self.set_endpoints(start_dt, end_dt)
         self.page_size = page_size
         self.pageconfig = {'PageSize': self.page_size}
@@ -109,7 +108,7 @@ class EC2SpotPrices():
                             )
         return self.page_iterator
 
-    def _region_paginators(self, regions=get_regions()):
+    def _region_paginators(self, regions):
         """
         Supplies regional paginator objects, one per unique AWS region
         """
@@ -129,7 +128,7 @@ class EC2SpotPrices():
         """
         strings = dt_string or self.dt_strings
 
-        for page_iterator in (self._region_paginators() if region is None else self._region_paginators([region])):
+        for page_iterator in (self._region_paginators(self.regions) if region is None else self._region_paginators([region])):
             try:
 
                 for page in page_iterator:
