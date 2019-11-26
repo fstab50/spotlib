@@ -2,7 +2,7 @@
 
 EC2 SpotPrice Lib, GPL v3 License
 
-Copyright (c) 2018-2019 Blake Huber
+Copyright (c) 2018-2020 Blake Huber
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
@@ -30,6 +30,7 @@ from botocore.exceptions import ClientError
 from spotlib.core import DurationEndpoints
 from spotlib.core.utc import utc_conversion
 from spotlib.lambda_utils import get_regions
+from spotlib.core import session_selector
 from spotlib import logger
 
 
@@ -65,7 +66,8 @@ class EC2SpotPrices():
             :debug (bool): debug output toggle
         """
         self.profile = profile
-        self.session = boto3.Session(profile_name=self.profile)
+        self.session = session_selector(profile)
+        #self.session = boto3.Session(profile_name=self.profile)
         self.regions = get_regions()
         self.start, self.end = self.set_endpoints(start_dt, end_dt)
         self.page_size = page_size

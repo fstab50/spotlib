@@ -1,7 +1,16 @@
 """
 Summary.
 
-    Python 3 Class.  Datatime object conversion --> utc formatted string
+    EC2 SpotPrice Lib, GPL v3 License
+
+    Copyright (c) 2018-2020 Blake Huber
+
+    Python 3 Class.  Datatime object conversion --> utc formatted
+    string when when embedded in a dictionary returned by Amazon
+    Web Services' EC2 Spot Price
+
+    Python 3 Module Function.  Datatime object conversion --> utc
+    formatted string
 
 """
 

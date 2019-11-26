@@ -2,7 +2,7 @@
 
 EC2 SpotPrice Lib, GPL v3 License
 
-Copyright (c) 2018-2019 Blake Huber
+Copyright (c) 2018-2020 Blake Huber
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal
