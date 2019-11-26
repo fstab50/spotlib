@@ -20,6 +20,48 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from spotlib import logger
 
 
+def authenticated(botosession):
+    """
+        Tests generic authentication status to AWS Account
+        Customised specifically for testing of memory-resident
+        credentials stored as environment variables.
+
+    Args:
+        :profile (str): iam user name from local awscli configuration
+
+    Returns:
+        TYPE: bool, True (Authenticated)| False (Unauthenticated)
+
+    """
+    try:
+
+        sts_client = botosession.client('sts')
+        httpstatus = sts_client.get_caller_identity()['ResponseMetadata']['HTTPStatusCode']
+
+        if httpstatus.starswith(20):
+            # http status code 2XX; successful
+            return True
+
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'InvalidClientTokenId':
+            logger.warning(
+                '%s: Invalid credentials to authenticate for profile user (%s). Exit. [Code: %d]'
+                % (inspect.stack()[0][3], profile, exit_codes['EX_NOPERM']['Code']))
+
+        elif e.response['Error']['Code'] == 'ExpiredToken':
+            logger.info(
+                '%s: Expired temporary credentials detected for profile user (%s) [Code: %d]'
+                % (inspect.stack()[0][3], profile, exit_codes['EX_CONFIG']['Code']))
+        else:
+            logger.exception(
+                '%s: Unknown Boto3 problem. Error: %s' %
+                (inspect.stack()[0][3], e.response['Error']['Message']))
+    except Exception as e:
+        fx = inspect.stack()[0][3]
+        logger.exception('{}: Unknown error: {}'.format(fx, e))
+    return False
+
+
 def session_selector(profile='default'):
     """
         Creates a boto3 session object after examining
@@ -47,12 +89,15 @@ def session_selector(profile='default'):
     token = os.environ.get('AWS_SESSION_TOKEN')
 
     try:
+
         if access_key and secret_key:
-            return boto3.Session(
+            session = boto3.Session(
                     aws_access_key_id=access_key,
                     aws_secret_access_key=secret_key,
                     aws_session_token=token
                 )
+            if authenticated(session):
+                return session
 
         return boto3.Session(profile_name=profile)
 
