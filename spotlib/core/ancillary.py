@@ -20,24 +20,23 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from spotlib import logger
 
 
-def session_selector(profile):
+def session_selector(profile='default'):
     """
-        Converts datetime object embedded in a dictionary schema
-        to utc datetime string format
+        Creates a boto3 session object after examining
+        available credential set(s).  session selector
+        follows the following authenication hierarchy:
+
+            1. Attempts to find memory-resident credentials
+               supplied as environment variables (example:
+                AWS Lambda service environment)
+            2. If (1) fails to find valid credentials, spotlib
+               local attempts to utilise awscli credentials
+               from local disk.
 
     Args:
-        :data (list | dict):  list of spot price data.  Alternatively,
-            can be same list wrapped in dictionary (below)
-
-    .. code: json
-
-        {
-            'AvailabilityZone': 'eu-west-1a',
-            'InstanceType': 'm5d.4xlarge',
-            'ProductDescription': 'Red Hat Enterprise Linux',
-            'SpotPrice': '0.420000',
-            'Timestamp': datetime.datetime(2019, 8, 11, 23, 56, 50, tzinfo=tzutc())
-        }
+        :profile (str):  Optional awscli profile_name
+            corresponding to a set of credentials stored
+            in the local awscli configuration
 
     Returns:
         instantiated session, TYPE:  boto3 object
