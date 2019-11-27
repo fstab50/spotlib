@@ -8,13 +8,11 @@ Help Menu
 """
 
 from spotlib.statics import PACKAGE, PACKAGE_CLI
-from spotlib.variables import c, bbc, rst
+from spotlib.variables import c, bbc, bdwt, bdcy, rst
 
 
 ACCENT = c.ORANGE               # orange accent highlight color
 bdacct = c.ORANGE + c.BOLD      # bold orange
-bdcy = c.CYAN + c.BOLD          # bold blue
-bdwt = c.BRIGHT_WHITE + c.BOLD          # bold blue
 lbrct = bbc + ' [ ' + rst        # left bracket
 rbrct = bbc + ' ] ' + rst        # right bracket
 vdiv = bbc + ' | ' + rst
