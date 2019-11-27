@@ -12,11 +12,12 @@ Summary.
           tied to a profile_name in the local awscli configuration.
 
 """
-
-import inspect
 import os
+import sys
+import inspect
 import boto3
-from botocore.exceptions import ClientError, NoCredentialsError
+from botocore.exceptions import ClientError, NoCredentialsError, ProfileNotFound
+from libtools.oscodes_unix import exit_codes
 from spotlib import logger
 
 
@@ -33,6 +34,8 @@ def authenticated(botosession):
         TYPE: bool, True (Authenticated)| False (Unauthenticated)
 
     """
+    fx = inspect.stack()[0][3]
+
     try:
 
         sts_client = botosession.client('sts')
@@ -46,18 +49,22 @@ def authenticated(botosession):
         if e.response['Error']['Code'] == 'InvalidClientTokenId':
             logger.warning(
                 '%s: Invalid credentials to authenticate for profile user (%s). Exit. [Code: %d]'
-                % (inspect.stack()[0][3], profile, exit_codes['EX_NOPERM']['Code']))
-
+                % (fx, profile, exit_codes['EX_NOPERM']['Code'])
+            )
         elif e.response['Error']['Code'] == 'ExpiredToken':
             logger.info(
                 '%s: Expired temporary credentials detected for profile user (%s) [Code: %d]'
-                % (inspect.stack()[0][3], profile, exit_codes['EX_CONFIG']['Code']))
+                % (fx, profile, exit_codes['EX_CONFIG']['Code'])
+            )
         else:
             logger.exception(
-                '%s: Unknown Boto3 problem. Error: %s' %
-                (inspect.stack()[0][3], e.response['Error']['Message']))
+                f'{fx}: Unknown authentication problem. Error: {e}'
+            )
+    except NoCredentialsError:
+        logger.exception(f'{fx}: Unable to authenicate to AWS: No credentials found')
+    except ProfileNotFound:
+        logger.exception(f'{fx}: Error during authentication. Unable to locate awscli profile_name')
     except Exception as e:
-        fx = inspect.stack()[0][3]
         logger.exception('{}: Unknown error: {}'.format(fx, e))
     return False
 
@@ -71,6 +78,7 @@ def session_selector(profile='default'):
             1. Attempts to find memory-resident credentials
                supplied as environment variables (example:
                 AWS Lambda service environment)
+
             2. If (1) fails to find valid credentials, spotlib
                local attempts to utilise awscli credentials
                from local disk.
@@ -88,6 +96,8 @@ def session_selector(profile='default'):
     secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
     token = os.environ.get('AWS_SESSION_TOKEN')
 
+    fx = inspect.stack()[0][3]
+
     try:
 
         if access_key and secret_key:
@@ -102,9 +112,10 @@ def session_selector(profile='default'):
         return boto3.Session(profile_name=profile)
 
     except ClientError as e:
-        fx = inspect.stack()[0][3]
-        logger.exception(f'{fx}: Boto client error while downloading spot history data: {e}')
-
+        logger.exception(f'{fx}: Boto client error during authentication to AWS: {e}')
     except NoCredentialsError:
-        fx = inspect.stack()[0][3]
         logger.exception(f'{fx}: Unable to authenicate to AWS: No credentials found')
+    except ProfileNotFound:
+        logger.exception(f'{fx}: Error during authentication. Unable to locate awscli profile_name')
+        pass
+    sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
