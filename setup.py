@@ -32,7 +32,7 @@ import spotlib
 
 requires = [
     'boto3>=1.9.100',
-    'libtools>=0.2.4'
+    'libtools>=0.3.1'
 ]
 
 
