@@ -225,7 +225,7 @@ def init():
     except Exception as e:
         help_menu()
         stdout_message(str(e), 'ERROR')
-        sys.exit(exit_codes['E_BADARG']['Code'])
+        sys.exit(exit_codes['EX_BADARG']['Code'])
 
     if len(sys.argv) == 1 or args.help:
         help_menu()
@@ -291,10 +291,10 @@ def init():
             prefix='AUTH',
             severity='WARNING'
             )
-        sys.exit(exit_codes['E_DEPENDENCY']['Code'])
+        sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
 
     failure = """ : Check of runtime parameters failed for unknown reason.
     Please ensure you have both read and write access to local filesystem. """
-    logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['E_MISC']['Code']))
+    logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['EX_MISC']['Code']))
     print(failure)
-    return sys.exit(exit_codes['E_BADARG']['Code'])
+    return sys.exit(exit_codes['EX_BADARG']['Code'])
