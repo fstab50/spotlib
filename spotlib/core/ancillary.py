@@ -41,7 +41,7 @@ def authenticated(botosession):
         sts_client = botosession.client('sts')
         httpstatus = sts_client.get_caller_identity()['ResponseMetadata']['HTTPStatusCode']
 
-        if httpstatus.starswith(20):
+        if httpstatus.startswith(20):
             # http status code 2XX; successful
             return True
 
@@ -109,7 +109,10 @@ def session_selector(profile='default'):
             if authenticated(session):
                 return session
 
-        return boto3.Session(profile_name=profile)
+        session = boto3.Session(profile_name=profile)
+
+        if authenticated(session):
+            return session
 
     except ClientError as e:
         logger.exception(f'{fx}: Boto client error during authentication to AWS: {e}')
