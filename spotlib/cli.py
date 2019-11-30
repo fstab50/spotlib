@@ -235,6 +235,8 @@ def init():
         package_version()
 
     elif (args.start and args.end) or args.duration:
+        args.profile = args.profile[0]
+
         # set local region
         args.region = [local_awsregion(args.profile)] if not args.region else args.region
 

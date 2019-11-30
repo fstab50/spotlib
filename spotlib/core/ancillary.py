@@ -39,9 +39,9 @@ def authenticated(botosession):
     try:
 
         sts_client = botosession.client('sts')
-        httpstatus = sts_client.get_caller_identity()['ResponseMetadata']['HTTPStatusCode']
+        httpstatus = str(sts_client.get_caller_identity()['ResponseMetadata']['HTTPStatusCode'])
 
-        if httpstatus.startswith(20):
+        if httpstatus.startswith('20'):
             # http status code 2XX; successful
             return True
 
