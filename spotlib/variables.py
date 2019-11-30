@@ -21,7 +21,7 @@ try:
     TITLE = c.WHITE + c.BOLD
 
 except Exception:
-    from libtools.oscodes_win import exit_codes           # non-specific os-safe codes
+    from libtools.oscodes_win import exit_codes          # non-specific os-safe codes
     os_type = 'Windows'
     username = os.getenv('username')
     splitchar = '\\'                                    # character for splitting paths (windows)
@@ -36,7 +36,7 @@ except Exception:
 bd = c.BOLD
 bcy = c.BRIGHT_CYAN
 bbc = bd + c.BRIGHT_CYAN
-bdcy = c.CYAN + c.BOLD          # bold blue
+bdcy = c.CYAN + c.BOLD       
 bl = c.BLUE
 bbl = c.BRIGHT_BLUE
 bbbl = bd + c.BRIGHT_BLUE
