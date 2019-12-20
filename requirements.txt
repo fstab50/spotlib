@@ -6,3 +6,4 @@ pytz
 setuptools
 twine
 libtools
+versionpro

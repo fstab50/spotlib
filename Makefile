@@ -91,9 +91,8 @@ test-help:   ## Print runtime options for running pytest unittests
 .PHONY: build
 build: artifacts  ## Build dist, increment version || force version (VERSION=X.Y)
 	if [ $(VERSION) ]; then . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py --set-version $(VERSION) --update; \
-	else . $(VENV_DIR)/bin/activate && \
-	$(PYTHON3_PATH) $(SCRIPTS)/version_update.py --update; fi; \
+	versionpro --set-version $(VERSION) --update; \
+	else . $(VENV_DIR)/bin/activate && versionpro --update; fi; \
 	. $(VENV_DIR)/bin/activate && cd $(CUR_DIR) && $(PYTHON3_PATH) setup.py sdist
 
 
@@ -133,6 +132,11 @@ source-install:  clean  setup-venv  ## Install (source: local source). Build art
 update-src-install:    ## Update Install (source: local source).
 	if [ -e $(VENV_DIR) ]; then \
 	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3*/site-packages/; fi
+
+
+.PHONY: simulate
+simulate:   ## Simulate a build to show version labels to be applied
+	cd $(CUR_DIR) && versionpro --dryrun;
 
 
 .PHONY: upload-images
