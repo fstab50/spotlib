@@ -29,6 +29,7 @@ import sys
 import re
 import datetime
 import inspect
+from pytz import timezone
 from spotlib import logger
 
 
@@ -58,7 +59,7 @@ def format_datetime(datetime_str):
         return dt.isoformat()
 
     if isinstance(datetime_str, str) and re_dt.match(datetime_str):
-        return datetime_str if not re_dtnot.match(datetime_str) else convert_dt(datetime_str)
+        return convert_dt(datetime_str) if re_dtnot.match(datetime_str) else datetime_str
     return ''.join([datetime_str, 'T00:00:00']) if re_date.match(datetime_str) else datetime_str
 
 
@@ -131,7 +132,7 @@ class DurationEndpoints():
             :end_time (datetime | str | None):  midnight on provided custom date
 
         Returns:
-            start, end: points in time, TYPE:  datetime regardless of input format
+            start, end: points in time, TYPE:  datetime object
 
         """
         try:
@@ -145,6 +146,7 @@ class DurationEndpoints():
 
             elif any(x is None for x in [start_time, end_time]):
                 start, end = self.default_endpoints()
+
         except Exception as e:
             fx = inspect.stack()[0][3]
             logger.exception(f'{fx}: Unknown exception while calc start & end duration: {e}')
@@ -158,8 +160,9 @@ class DurationEndpoints():
         return self.default_endpoints(duration_days)
 
     def _convert_dt_string(self, dt_str):
-        dt_format = '%Y-%m-%dT%H:%M:%SZ'
-        return datetime.datetime.strptime(format_datetime(dt_str), dt_format)
+        dt_format = '%Y-%m-%dT%H:%M:%S'
+        tz_stripped = datetime.datetime.strptime(format_datetime(dt_str), dt_format)
+        return tz_stripped.replace(tzinfo=timezone('UTC'))
 
     def __str__(self):
         return self.__repr__()
