@@ -133,12 +133,12 @@ def options(parser, help_menu=False):
 
     parser.add_argument("-C", "--configure", dest='configure', action='store_true', required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', default=False, required=False)
-    parser.add_argument("-e", "--end", dest='end', nargs='*', default=end_dt, required=False)
+    parser.add_argument("-e", "--end", dest='end', nargs=1, default=end_dt, required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     parser.add_argument("-p", "--profile", dest='profile', nargs=1, default='default', required=False)
     parser.add_argument("-r", "--region", dest='region', nargs='*', default=[], required=False)
     parser.add_argument("-D", "--duration-days", dest='duration', nargs='*', default=None, required=False)
-    parser.add_argument("-s", "--start", dest='start', nargs='*', default=start_dt, required=False)
+    parser.add_argument("-s", "--start", dest='start', nargs=1, default=start_dt, required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     return parser.parse_known_args()
 
@@ -248,7 +248,7 @@ def init():
         if args.duration and isinstance(int(args.duration[0]), int):
             start, end = sp.set_endpoints(duration=int(args.duration[0]))
         else:
-            start, end = sp.set_endpoints(args.start, args.end)
+            start, end = sp.set_endpoints(args.start[0], args.end[0])
 
         # global container for ec2 instance size types
         instance_sizes = []
