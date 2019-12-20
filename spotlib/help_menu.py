@@ -46,7 +46,6 @@ menu_body = menu_title + bdwt + """
                        [-s, --start  <value>  ]
                        [-e, --end    <value>  ]
                        [-d, --duration-days   <value>  ]
-                       [-l, --list  <methods> | <regions>  ]
                        [-p, --profile  <value>  ]
                        [-d, --debug    ]
                        [-h, --help     ]
@@ -59,22 +58,19 @@ menu_body = menu_title + bdwt + """
     """ + bdwt + """
         -d, --debug""" + rst + """:  Print out additional  debugging information
     """ + bdwt + """
+        -s, --start""" + rst + """ <value>:  Datetime of start of price sampling
+            period (example: 2019-09-03T00:00:00). See --end.
+    """ + bdwt + """
         -e, --end""" + rst + """ <value>:  Datetime of end of the price sampling
             period (example: 2019-09-04T23:59:59). See --start.
     """ + bdwt + """
         -h, --help""" + rst + """: Show this help message, symbol legend, & exit
-    """ + bdwt + """
-        -l, --list""" + rst + """ <value>: List available method calls or Amazon
-            Web Services' region codes.
     """ + bdwt + """
         -p, --profile""" + rst + """: Access the AWS api using specified profile
             from the local awscli configuration.
     """ + bdwt + """
         -r, --region""" + rst + """:  AWS region code (e.g. us-east-1) for which
             you wish to retrieve EC2 spot price data.
-    """ + bdwt + """
-        -s, --start""" + rst + """ <value>:  Datetime of start of price sampling
-            period (example: 2019-09-03T00:00:00). See --end.
     """ + bdwt + """
         -V, --version""" + rst + """: Print version, license, and copyright info
     """
