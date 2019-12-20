@@ -2,6 +2,7 @@ boto3
 distro
 pkginfo
 Pygments
+pytz
 setuptools
 twine
 libtools
