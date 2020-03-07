@@ -49,7 +49,7 @@ else:
     version = __version__
 
     # filesystem location
-    origin = os.getcwd()
+    root = '/tmp'
 
     # config parameters
     config_dir = '.config'
@@ -62,7 +62,7 @@ else:
     enable_logging = False
     log_mode = 'STREAM'
     log_filename = 'spotlib.log'
-    log_dir = os_parityPath(os.path.join(origin, 'logs'))
+    log_dir = os_parityPath(os.path.join(root, 'logs'))
     log_path = os_parityPath(os.path.join(log_dir, log_filename))
 
     seed_config = {
