@@ -16,12 +16,10 @@ Module Attributes:
 import os
 import inspect
 import logging
+from spotlib.common import read_local_config, get_os, os_parityPath
 from spotlib._version import __version__
 
-try:
-    from libtools import read_local_config, get_os, os_parityPath
-except Exception:
-    pass
+
 
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
