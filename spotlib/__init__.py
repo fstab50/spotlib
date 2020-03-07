@@ -1,4 +1,5 @@
 from spotlib._version import __version__ as version
+from spotlib.statics import local_config
 
 
 __author__ = 'Blake Huber'
@@ -8,7 +9,6 @@ __email__ = "blakeca00@gmail.com"
 
 try:
 
-    from spotlib.statics import local_config
 
     from libtools import Colors
     from libtools import logd
