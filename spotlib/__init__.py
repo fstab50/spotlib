@@ -17,10 +17,9 @@ try:
     logd.local_config = local_config
     logger = logd.getLogger(__version__)
 
+    from spotlib.core import EC2SpotPrices as SpotPrices
+    from spotlib.core import DurationEndpoints
+    from spotlib.core import UtcConversion, utc_conversion
+
 except Exception:
     pass
-
-
-from spotlib.core import EC2SpotPrices as SpotPrices
-from spotlib.core import DurationEndpoints
-from spotlib.core import UtcConversion, utc_conversion
