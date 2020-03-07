@@ -12,7 +12,7 @@ import logging
 import platform
 import subprocess
 from pathlib import Path
-from libtools._version import __version__
+from spotlib._version import __version__
 
 
 logger = logging.getLogger(__version__)
