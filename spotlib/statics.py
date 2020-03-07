@@ -89,7 +89,7 @@ else:
 
 try:
 
-    if not os.path.exists(log_dir):
+    if not os.path.exists(log_dir) and log_mode != 'STREAM':
         os.mkdir(log_dir)
         os.chmod(log_dir, 0o755)
     if os.path.exists(config_path):
