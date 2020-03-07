@@ -95,24 +95,6 @@ def read(fname):
     return open(os.path.join(basedir, fname)).read()
 
 
-def user_home():
-    """Returns os specific home dir for current user"""
-    try:
-        if platform.system() == 'Linux' or platform.system() == 'Darwin':
-            # Linux or BSD Unix (Mac)
-            return os.path.expanduser('~') or os.environ.get('HOME')
-
-        elif platform.system() == 'Windows':
-            username = os.getenv('username')
-            return 'C:\\Users\\' + username
-
-        elif platform.system() == 'Java':
-            print('Unable to determine home dir, unsupported os type')
-            sys.exit(1)
-    except OSError as e:
-        raise e
-
-
 setup(
     name=_project,
     version=spotlib.__version__,

@@ -62,8 +62,8 @@ else:
     enable_logging = False
     log_mode = 'STREAM'
     log_filename = 'spotlib.log'
-    log_dir = os_parityPath(os.path.join(root, 'logs'))
-    log_path = os_parityPath(os.path.join(log_dir, log_filename))
+    #log_dir = os_parityPath(os.path.join(root, 'logs'))
+    log_path = os_parityPath(os.path.join(root, log_filename))
 
     seed_config = {
         "PROJECT": {
@@ -89,9 +89,9 @@ else:
 
 try:
 
-    if not os.path.exists(log_dir) and log_mode != 'STREAM':
-        os.mkdir(log_dir)
-        os.chmod(log_dir, 0o755)
+    #if not os.path.exists(log_dir) and log_mode != 'STREAM':
+    #    os.mkdir(log_dir)
+    #    os.chmod(log_dir, 0o755)
     if os.path.exists(config_path):
         # parse config file
         local_config = read_local_config(cfg=config_path)
