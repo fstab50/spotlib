@@ -55,7 +55,7 @@ class EC2SpotPrices():
         spot price data (generator)
 
     """
-    def __init__(self, profile='default', start_dt=None, end_dt=None, page_size=500, dt_strings=False, debug=False):
+    def __init__(self, profile=None, start_dt=None, end_dt=None, page_size=500, dt_strings=False, debug=False):
         """
         Args:
             :profile (str): iam identity with appropriate permissions for spot price functionality
@@ -66,8 +66,8 @@ class EC2SpotPrices():
             :debug (bool): debug output toggle
         """
         self.profile = profile
-        self.session = session_selector(self.profile)
-        self.regions = get_regions(self.profile)
+        self.session = session_selector(profile)
+        self.regions = get_regions() if profile is None else get_regions(profile)
         self.start, self.end = self.set_endpoints(start_dt, end_dt)
         self.page_size = page_size
         self.pageconfig = {'PageSize': self.page_size}

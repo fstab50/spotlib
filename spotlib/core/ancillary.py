@@ -69,7 +69,7 @@ def authenticated(botosession):
     return False
 
 
-def session_selector(profile='default'):
+def session_selector(profile):
     """
         Creates a boto3 session object after examining
         available credential set(s).  session selector
@@ -101,16 +101,20 @@ def session_selector(profile='default'):
     try:
 
         if access_key and secret_key:
-            session = boto3.Session(
+            session_env = boto3.Session(
                     aws_access_key_id=access_key,
                     aws_secret_access_key=secret_key,
                     aws_session_token=token
                 )
-            if authenticated(session):
-                return session
+            if authenticated(session_env):
+                return session_env
 
-        session = boto3.Session(profile_name=profile)
+        if profile is not None:
+            session_profile = boto3.Session(profile_name=profile)
+            if authenticated(session_profile):
+                return session_profile
 
+        session = boto3.Session()
         if authenticated(session):
             return session
 
@@ -120,5 +124,4 @@ def session_selector(profile='default'):
         logger.exception(f'{fx}: Unable to authenicate to AWS: No credentials found')
     except ProfileNotFound:
         logger.exception(f'{fx}: Error during authentication. Unable to locate awscli profile_name')
-        pass
     sys.exit(exit_codes['EX_DEPENDENCY']['Code'])
