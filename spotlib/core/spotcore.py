@@ -127,6 +127,7 @@ class EC2SpotPrices():
             spot price data (generator)
         """
         strings = dt_string or self.dt_strings
+        rgn = region if region is not None else 'unknown'
 
         for page_iterator in (self._region_paginators(self.regions) if region is None else self._region_paginators([region])):
             try:
@@ -137,11 +138,12 @@ class EC2SpotPrices():
 
             except ClientError as e:
                 fx = inspect.stack()[0][3]
-                logger.exception(f'{fx}: Boto client error while downloading spot history data: {e}')
+                logger.exception(
+                    f'{fx}: Boto client error while downloading spot data in region {rgn}: {e}')
                 continue
             except Exception as e:
                 fx = inspect.stack()[0][3]
-                logger.exception(f'{fx}: Unknown exception during spot price data retrieval: {e}')
+                logger.exception(f'{fx}: Unknown exception during spot data retrieval region {rgn}: {e}')
 
     def generate_pricedata(self, regions, dtstrings=False):
         """
