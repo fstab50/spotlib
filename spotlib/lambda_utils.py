@@ -131,7 +131,7 @@ def get_account_info(account_profile=None):
     return (number, name)
 
 
-def get_regions(profile='default'):
+def get_regions(profile=None):
     """
     Summary
         Returns list of region codes for all AWS regions worldwide

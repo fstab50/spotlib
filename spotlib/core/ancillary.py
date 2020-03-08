@@ -100,23 +100,32 @@ def session_selector(profile):
 
     try:
 
-        if access_key and secret_key:
-            session_env = boto3.Session(
-                    aws_access_key_id=access_key,
-                    aws_secret_access_key=secret_key,
-                    aws_session_token=token
-                )
-            if authenticated(session_env):
-                return session_env
-
         if profile is not None:
             session_profile = boto3.Session(profile_name=profile)
             if authenticated(session_profile):
                 return session_profile
 
-        session = boto3.Session()
-        if authenticated(session):
-            return session
+        elif access_key and secret_key and token:
+            session_env1 = boto3.Session(
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    aws_session_token=token
+                )
+            if authenticated(session_env1):
+                return session_env1
+
+        elif access_key and secret_key:
+            session_env2 = boto3.Session(
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key
+                )
+            if authenticated(session_env2):
+                return session_env2
+
+        else:
+            session = boto3.Session()
+            if authenticated(session):
+                return session
 
     except ClientError as e:
         logger.exception(f'{fx}: Boto client error during authentication to AWS: {e}')
