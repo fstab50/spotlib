@@ -122,10 +122,9 @@ def session_selector(profile):
             if authenticated(session_env2):
                 return session_env2
 
-        else:
-            session = boto3.Session()
-            if authenticated(session):
-                return session
+        session = boto3.Session()
+        if authenticated(session):
+            return session
 
     except ClientError as e:
         logger.exception(f'{fx}: Boto client error during authentication to AWS: {e}')
