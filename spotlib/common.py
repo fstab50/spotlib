@@ -35,7 +35,6 @@ def get_os(detailed=False):
 
         if os_type == 'Linux':
             os_detail = platform.platform()
-            distribution = platform.linux_distribution()[0]
             HOME = str(Path.home())
             username = os.getenv('USER')
         elif os_type == 'Windows':
@@ -56,15 +55,7 @@ def get_os(detailed=False):
             '%s: problem determining local os environment %s' %
             (inspect.stack()[0][3], str(e))
             )
-    if detailed and os_type == 'Linux':
-        return {
-                'os_type': os_type,
-                'os_detail': os_detail,
-                'linux_distribution': distribution,
-                'username': username,
-                'HOME': HOME
-            }
-    elif detailed:
+    if detailed:
         return {
                 'os_type': os_type,
                 'os_detail': os_detail,
