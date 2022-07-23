@@ -108,7 +108,7 @@ $  sudo -H pip3 install spotlib
 3. Retrieve spot price data for the custom time period for a particular region:
 
     ```python
-    >>> prices = sp.generate_pricedata(regions=[eu-west-1])
+    >>> prices = sp.generate_pricedata(regions=['eu-west-1'])
     ```
 
 4. Examine price data returned:
